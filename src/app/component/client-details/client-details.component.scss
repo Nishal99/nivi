@@ -1,0 +1,25 @@
+.table{
+    width: 100%;
+    font-family: "roboto", sans-serif;
+    text-align: left;
+    
+    
+}
+th{
+        padding: 12px;
+        font-weight: 600;
+    }
+
+    tbody{
+        tr{
+            &:hover{
+                background-color: darken(#f5f5f5, 2%);
+            }
+        }
+        img{
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+    }

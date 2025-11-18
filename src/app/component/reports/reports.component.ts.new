@@ -1,0 +1,113 @@
+import { Component,OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {  ReportService } from '../../services/reports.service';
+import { NgFor, NgIf, DatePipe } from '@angular/common';
+
+@Component({
+  selector: 'app-reports',
+  imports: [ReactiveFormsModule, FormsModule,NgIf,NgFor,DatePipe],
+  templateUrl: './reports.component.html',
+  styleUrl: './reports.component.scss'
+})
+export class ReportsComponent implements OnInit {
+    reportForm: FormGroup;
+  isLoading = false;
+  errorMessage = '';
+  successMessage = '';
+  results: any[] = [];
+  agentSuggestions: any[] = [];
+  isSearchingAgent = false;
+
+  constructor(private fb: FormBuilder, private reportService: ReportService) {
+    this.reportForm = this.fb.group({
+      reportType: ['', Validators.required],
+      agentName: [''],
+      startDate: ['', Validators.required],
+      endDate: ['', Validators.required],
+      sourceType: [''],
+      visaType: [''],
+      abscondingType: ['']
+    });
+
+    // Add agent name search debounce
+    this.reportForm.get('agentName')?.valueChanges.subscribe(value => {
+      if (value && value.length >= 2) {
+        this.searchAgents(value);
+      } else {
+        this.agentSuggestions = [];
+      }
+    });
+  }
+
+  ngOnInit(): void {}
+
+  get reportType(): string {
+    return this.reportForm.get('reportType')?.value;
+  }
+
+  searchAgents(query: string): void {
+    this.isSearchingAgent = true;
+    this.reportService.searchAgents(query).subscribe(
+      (agents) => {
+        this.agentSuggestions = agents;
+        this.isSearchingAgent = false;
+      },
+      (error) => {
+        console.error('Error searching agents:', error);
+        this.isSearchingAgent = false;
+      }
+    );
+  }
+
+  selectAgent(agent: any): void {
+    // Store Agent ID in the filter (backend expects Agent_id). Display name stays in suggestions before selection.
+    const agentId = agent.agent_id ?? agent.Id ?? agent.id ?? agent.name;
+    this.reportForm.patchValue({
+      agentName: agentId
+    });
+    this.agentSuggestions = [];
+  }
+
+  onReportTypeChange(event: any): void {
+    const type = event.target.value;
+    // Reset visa-specific fields if not visa
+    if (type !== 'visa') {
+      this.reportForm.patchValue({
+        sourceType: '',
+        visaType: '',
+        abscondingType: ''
+      });
+    }
+    // Clear previous results when changing report type
+    this.results = [];
+    this.errorMessage = '';
+    this.successMessage = '';
+  }
+
+  async onSubmit(): Promise<void> {
+    if (this.reportForm.invalid) return;
+
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    try {
+      const formData = this.reportForm.value;
+      const response = await this.reportService.generateReport(formData).toPromise();
+      
+      // Use raw response data; the template will show columns per reportType
+      this.results = response.data || [];
+
+      if (this.results.length > 0) {
+        this.successMessage = `Generated ${this.results.length} records.`;
+      } else {
+        this.successMessage = 'No records found for the selected filters.';
+      }
+    } catch (error: any) {
+      this.errorMessage = error.error?.message || 'Failed to generate report.';
+      this.results = []; // Clear results on error
+    } finally {
+      this.isLoading = false;
+    }
+  }
+}

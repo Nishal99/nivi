@@ -1,0 +1,39 @@
+<div class="container mx-auto px-4 py-8 ">
+    <h1 class="text-3xl font-bold mb-8 text-gray-800">Dashboard</h1>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Total Clients Card -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="flex flex-col">
+                <div class="text-sm font-medium text-gray-500 mb-1">Total Clients</div>
+                <div class="text-3xl font-bold text-blue-600">{{totalClients}}</div>
+            </div>
+        </div>
+
+        <!-- Total Agents Card -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="flex flex-col">
+                <div class="text-sm font-medium text-gray-500 mb-1">Total Agents</div>
+                <div class="text-3xl font-bold text-green-600">{{totalAgents}}</div>
+            </div>
+        </div>
+
+        <!-- Expiring Visas Card -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="flex flex-col">
+                <div class="text-sm font-medium text-gray-500 mb-1">Visas Expiring Soon</div>
+                <div class="text-3xl font-bold text-red-600">{{expiringVisas}}</div>
+                <div class="text-xs text-gray-500 mt-1">In the next 30 days</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Section -->
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Visa Expiry Timeline</h2>
+        <div class="w-full h-auto">
+            <canvas id="visaExpiryChart"></canvas>
+        </div>
+    </div>
+</div>

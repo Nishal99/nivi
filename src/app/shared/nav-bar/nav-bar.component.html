@@ -1,0 +1,130 @@
+<!-- Mobile overlay with blur effect -->
+<div *ngIf="mobileOpen" class="fixed inset-0 z-30 backdrop-blur-sm bg-black/30 md:hidden" (click)="closeMobile()"></div>
+
+<!-- Sidebar -->
+<aside
+  class="sidebar absolute left-0 top-0 h-screen flex flex-col z-40 md:translate-x-0 md:static md:h-screen md:top-auto md:left-auto md:z-auto"
+  [class.w-60]="!collapsed"
+  [class.w-20]="collapsed"
+  [class.-translate-x-full]="!mobileOpen"
+  [class.translate-x-0]="mobileOpen"
+  role="navigation"
+  aria-label="Sidebar navigation"
+>
+  <!-- Brand / header -->
+  <div class="p-4 flex items-center justify-between border-b border-gray-100 h-16">
+    <div class="flex items-center space-x-3">
+      <svg xmlns="http://www.w3.org/2000/svg" class="brand-logo h-8 w-8" viewBox="0 -960 960 960" fill="#3b82f6">
+        <path d="M120-120v-720h720v720H120Zm60-60h600v-600H180v600Zm60-150h480v-60H240v60Zm0-120h480v-60H240v60Zm0-120h480v-60H240v60Z"/>
+      </svg>
+      <span class="font-semibold text-lg text-gray-800 tracking-tight transition-opacity duration-200" [class.opacity-0]="collapsed" [class.hidden]="collapsed">
+        Visa Management
+      </span>
+    </div>
+
+    <!-- collapse button for desktop -->
+    <!-- <button class="hidden md:inline-flex p-2 rounded-lg hover:bg-blue-50 hover:text-blue-600 text-gray-500 transition-colors duration-200" 
+            (click)="toggleCollapse()" 
+            aria-label="Toggle sidebar width" 
+            [attr.aria-expanded]="!collapsed">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16"/>
+      </svg>
+    </button> -->
+
+    <!-- burger for mobile (hidden when sidebar is collapsed) -->
+    <button class="md:hidden p-2 rounded-lg hover:bg-blue-50 hover:text-blue-600 text-gray-500 transition-colors duration-200" 
+      (click)="toggleMobile()" 
+      aria-label="Open menu" 
+      [attr.aria-expanded]="mobileOpen"
+      [class.hidden]="collapsed">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Nav items -->
+  <nav class="flex-1 px-3 py-4 overflow-auto">
+    <ul class="space-y-1.5">
+      <li>
+      <a routerLink="/dashboard" 
+        routerLinkActive="active" 
+        class="nav-link flex items-center py-3 rounded-xl hover:bg-blue-50/60 text-gray-600 transition-all duration-200" 
+        [class.px-4]="!collapsed" [class.px-0]="collapsed" [class.justify-center]="collapsed"
+        (click)="closeMobile()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon w-5 h-5" [class.mr-3]="!collapsed" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+          </svg>
+          <span class="truncate font-medium" [class.hidden]="collapsed">Dashboard</span>
+        </a>
+      </li>
+      <li>
+      <a routerLink="/client-details" 
+        routerLinkActive="active" 
+        class="nav-link flex items-center py-3 rounded-xl hover:bg-blue-50/60 text-gray-600 transition-all duration-200" 
+        [class.px-4]="!collapsed" [class.px-0]="collapsed" [class.justify-center]="collapsed"
+        (click)="closeMobile()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon w-5 h-5" [class.mr-3]="!collapsed" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <span class="truncate font-medium" [class.hidden]="collapsed">Passengers</span>
+        </a>
+      </li>
+      <li>
+      <a routerLink="/agent-details" 
+        routerLinkActive="active" 
+        class="nav-link flex items-center py-3 rounded-xl hover:bg-blue-50/60 text-gray-600 transition-all duration-200" 
+        [class.px-4]="!collapsed" [class.px-0]="collapsed" [class.justify-center]="collapsed"
+        (click)="closeMobile()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon w-5 h-5" [class.mr-3]="!collapsed" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+          <span class="truncate font-medium" [class.hidden]="collapsed">Agents</span>
+        </a>
+      </li>
+      <li>
+      <a routerLink="/supplier-details" 
+        routerLinkActive="active" 
+        class="nav-link flex items-center py-3 rounded-xl hover:bg-blue-50/60 text-gray-600 transition-all duration-200" 
+        [class.px-4]="!collapsed" [class.px-0]="collapsed" [class.justify-center]="collapsed"
+        (click)="closeMobile()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon w-5 h-5" [class.mr-3]="!collapsed" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+          </svg>
+          <span class="truncate font-medium" [class.hidden]="collapsed">Suppliers</span>
+        </a>
+      </li>
+      <li>
+      <a routerLink="/reports" 
+        routerLinkActive="active" 
+        class="nav-link flex items-center py-3 rounded-xl hover:bg-blue-50/60 text-gray-600 transition-all duration-200" 
+        [class.px-4]="!collapsed" [class.px-0]="collapsed" [class.justify-center]="collapsed"
+        (click)="closeMobile()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon w-5 h-5" [class.mr-3]="!collapsed" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <span class="truncate font-medium" [class.hidden]="collapsed">Reports</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Profile -->
+  <div class="profile-section mt-auto p-3">
+   <a routerLink="/profile" 
+     class="flex items-center space-x-3 hover:bg-blue-50/60 rounded-xl transition-all duration-200" 
+     [class.p-3]="!collapsed" [class.p-2]="collapsed" [class.justify-center]="collapsed"
+     (click)="closeMobile()">
+      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M200-246q54-53 125.5-83.5T480-360q83 0 154.5 30.5T760-246v-514H200v514Zm280-194q58 0 99-41t41-99q0-58-41-99t-99-41q-58 0-99 41t-41 99q0 58 41 99t99 41ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm69-80h422q-44-39-99.5-59.5T480-280q-56 0-112.5 20.5T269-200Zm211-320q-25 0-42.5-17.5T420-580q0-25 17.5-42.5T480-640q25 0 42.5 17.5T540-580q0 25-17.5 42.5T480-520Zm0 17Z"/></svg>
+      <div class="transition-opacity duration-200" [class.opacity-0]="collapsed" [class.hidden]="collapsed">
+        <div class="text-sm font-medium text-gray-700">{{currentUser?.username}}</div>
+        <div class="text-xs text-blue-600 font-medium">View profile</div>
+      </div>
+    </a>
+  </div>
+   <div class="flex flex-row justify-center items-center  mb-4 logout-btn">
+    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
+      <button class="logout-btn" (click)="logout()">Logout</button>
+    </div>
+</aside>

@@ -1,0 +1,8 @@
+:host{display:block}
+
+/* subtle background */
+:host section{background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(248,250,252,0.95));}
+
+@media (min-width: 768px){
+  .max-w-3xl{gap:1.5rem}
+}

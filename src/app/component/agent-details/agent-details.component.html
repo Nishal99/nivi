@@ -1,0 +1,143 @@
+<div class="text-start flex flex-col justify-start min-h-screen w-full">
+    <div class="flex flex-col text-start w-full">
+        <div class="flex flex-row justify-between items-center m-4">
+            <h2 class="text-4xl font-semibold font-sans m-0">Agent Details</h2>
+            <button id="addClient" (click)="handleModel()"
+                class="m-4 bg-blue-600 px-10 py-2 font-normal rounded-lg text-white hover:bg-blue-700 hover:outline-1 outline-offset-1 transition delay-150 duration-300 ease-in-out hover:-translate-y-0.75 hover:scale-105">Add
+                Agent</button>
+        </div>
+    <div class="overflow-x-auto mx-4 my-2 p-4">
+
+            <!-- Search Bar -->
+            <div class="search-bar flex flex-row w-full p-3 bg-white border border-gray-300 rounded-lg shadow-sm mb-6">
+                <span class="text-gray-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
+                        <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z" />
+                    </svg>
+                </span>
+                <input type="text" placeholder="Search agents..." class="w-full border-0 focus:outline-none px-3" />
+            </div>
+
+            <!-- Table Container -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact Person</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Person's Phone</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Person's Email</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr *ngFor="let agent of agentsList" class="hover:bg-gray-50 transition-colors duration-200">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">{{ agent.CompanyName || agent.companyName }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">{{ agent.Email || agent.email }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">{{ agent.Contact || agent.contact }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">{{ agent.ContactPersonName || agent.contactPersonName }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">{{ agent.ContactPersonPhone || agent.contactPersonPhone }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">{{ agent.ContactPersonEmail || agent.contactPersonEmail }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 py-1 text-xs font-medium rounded-full"
+                                          [ngClass]="{'bg-green-100 text-green-800': agent.status === 'active', 'bg-red-100 text-red-800': agent.status === 'inactive'}">
+                                        {{ (agent.status || 'active') | titlecase }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                                    <!-- <button (click)="viewAgent(agent.Id)"
+                                        class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                        View
+                                    </button> -->
+                                    <button (click)="editAgent(agent.Id)"
+                                        class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                        Edit
+                                    </button>
+                                    <button (click)="toggleAgentStatus(agent)"
+                                        class="inline-flex items-center px-3 flex justify-center items-center py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white w-20"
+                                        [ngClass]="{'bg-red-600 hover:bg-red-700': agent.status === 'active' || !agent.status, 'bg-green-600 hover:bg-green-700': agent.status === 'inactive'}">
+                                        {{ agent.status === 'inactive' ? 'Activate' : 'Deactivate' }}
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    </div>
+
+    <!-- Add/Edit Agent Modal (improved UI) -->
+    <div [ngStyle]="{'display': openModel}" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 backdrop-blur-sm p-4" id="modal">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+            <!-- Header -->
+            <div class="sticky top-0 bg-white px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                <h3 class="text-2xl font-semibold text-gray-800">{{ isEditMode ? 'Edit Agent' : 'Add New Agent' }}</h3>
+                <button type="button" (click)="handleModelClose()" class="p-2 rounded hover:bg-red-50 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-500 hover:text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <form [formGroup]="agentForm" (ngSubmit)="onSubmit()" class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Company Details -->
+                    <div class="space-y-4">
+                        <label class="block text-sm font-medium text-gray-700">Company Name</label>
+                        <input type="text" formControlName="companyName" placeholder="e.g., Acme Corp" class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
+
+                        <label class="block text-sm font-medium text-gray-700">Company Email</label>
+                        <input type="email" formControlName="email" placeholder="company@example.com" class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
+
+                        <label class="block text-sm font-medium text-gray-700">Contact</label>
+                        <input type="text" formControlName="contact" placeholder="+94 112 345 678" class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
+                    </div>
+
+                    <!-- Contact Person Details -->
+                    <div class="space-y-4">
+                        <label class="block text-sm font-medium text-gray-700">Contact Person</label>
+                        <input type="text" formControlName="contactPersonName" placeholder="John Doe" class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
+
+                        <label class="block text-sm font-medium text-gray-700">Person's Phone</label>
+                        <input type="tel" formControlName="contactPersonPhone" placeholder="+94 777 123 456" class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
+
+                        <label class="block text-sm font-medium text-gray-700">Person's Email</label>
+                        <input type="email" formControlName="contactPersonEmail" placeholder="person@example.com" class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
+                    </div>
+                </div>
+      
+                <div class="mt-6">
+                    <label class="inline-flex items-center">
+                        <input type="checkbox" formControlName="status" class="h-4 w-4 text-blue-600" />
+                        <span class="ml-2 text-sm text-gray-700">Active</span>
+                    </label>
+                </div>
+            </form>
+
+            <!-- Footer Actions -->
+            <div class="sticky bottom-0 bg-white px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+                <button type="button" (click)="handleModelClose()" class="px-4 py-2 bg-gray-100 rounded-md text-gray-700 hover:bg-gray-200">Cancel</button>
+                <button type="button" (click)="onSubmit()" [disabled]="agentForm.invalid" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed">{{ isEditMode ? 'Update Agent' : 'Create Agent' }}</button>
+            </div>
+        </div>
+    </div>

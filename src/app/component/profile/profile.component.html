@@ -1,0 +1,226 @@
+<div class="profile-container">
+  <div class="profile-header">
+    <div class="header-content">
+      <div class="user-info">
+        <div class="avatar-container">
+          <div class="avatar">{{currentUser?.username?.[0]?.toUpperCase() || 'U'}}</div>
+        </div>
+        <div class="user-details">
+          <h2 class="user-name">{{currentUser?.name || 'User'}}</h2>
+          <span class="user-role" [class.admin-role]="currentUser?.role === 'admin'">
+            {{currentUser?.role === 'admin' ? 'Administrator' : 'User'}}
+          </span>
+        </div>
+      </div>
+      <button class="logout-btn" (click)="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="profile-section">
+    <h2>Update Profile</h2>
+    <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input 
+          type="text" 
+          id="username" 
+          formControlName="username" 
+          class="form-control">
+        <div class="error-message" *ngIf="profileForm.get('username')?.touched && profileForm.get('username')?.invalid">
+          Username is required and must be at least 3 characters
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          type="email" 
+          id="email" 
+          formControlName="email" 
+          class="form-control">
+        <div class="error-message" *ngIf="profileForm.get('email')?.touched && profileForm.get('email')?.invalid">
+          Please enter a valid email address
+        </div>
+      </div>
+
+      <button type="submit" [disabled]="!profileForm.valid" class="btn-primary">
+        Update Profile
+      </button>
+    </form>
+  </div>
+
+  <div class="profile-section">
+    <h2>Change Password</h2>
+    <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+      <div class="form-group">
+        <label for="currentPassword">Current Password</label>
+        <input 
+          type="password" 
+          id="currentPassword" 
+          formControlName="currentPassword" 
+          class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label for="newPassword">New Password</label>
+        <input 
+          type="password" 
+          id="newPassword" 
+          formControlName="newPassword" 
+          class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input 
+          type="password" 
+          id="confirmPassword" 
+          formControlName="confirmPassword" 
+          class="form-control">
+        <div class="error-message" *ngIf="passwordForm.hasError('mismatch')">
+          Passwords do not match
+        </div>
+      </div>
+
+      <button type="submit" [disabled]="!passwordForm.valid" class="btn-primary">
+        Change Password
+      </button>
+    </form>
+  </div>
+
+  <!-- Admin Section -->
+  <div class="admin-section" *ngIf="isAdmin">
+    <div class="profile-section">
+      <h2>Create New User</h2>
+      <form [formGroup]="newUserForm" (ngSubmit)="createNewUser()">
+        <div class="form-group">
+          <label for="fullname">Full Name *</label>
+          <input 
+            type="text" 
+            id="fullname" 
+            formControlName="fullname" 
+            class="form-control"
+            [class.is-invalid]="isFieldInvalid('fullname')"
+            placeholder="Enter full name">
+          <div class="error-message" *ngIf="isFieldInvalid('fullname')">
+            {{ getErrorMessage('fullname') }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input 
+            type="email" 
+            id="email" 
+            formControlName="email" 
+            class="form-control"
+            [class.is-invalid]="isFieldInvalid('email')"
+            placeholder="Enter email">
+          <div class="error-message" *ngIf="isFieldInvalid('email')">
+            {{ getErrorMessage('email') }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="username">Username *</label>
+          <input 
+            type="text" 
+            id="username" 
+            formControlName="username" 
+            class="form-control"
+            [class.is-invalid]="isFieldInvalid('username')"
+            placeholder="Enter username">
+          <div class="error-message" *ngIf="isFieldInvalid('username')">
+            {{ getErrorMessage('username') }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password *</label>
+          <input 
+            type="password" 
+            id="password" 
+            formControlName="password" 
+            class="form-control"
+            [class.is-invalid]="isFieldInvalid('password')"
+            placeholder="Enter password">
+          <div class="error-message" *ngIf="isFieldInvalid('password')">
+            {{ getErrorMessage('password') }}
+          </div>
+          <small class="form-text text-muted">
+            Password must contain at least 6 characters, including uppercase, lowercase, number, and special character.
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="role">Role *</label>
+          <select id="role" formControlName="role" class="form-control" [class.is-invalid]="isFieldInvalid('role')">
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+          <div class="error-message" *ngIf="isFieldInvalid('role')">
+            {{ getErrorMessage('role') }}
+          </div>
+        </div>
+
+        <button type="submit" [disabled]="!newUserForm.valid" class="btn-primary">
+          Create User
+        </button>
+      </form>
+    </div>
+
+    <div class="profile-section">
+      <h2>Manage Users</h2>
+      
+      <div class="filter-section">
+        <label for="statusFilter">Filter by Status:</label>
+        <select 
+          id="statusFilter" 
+          [(ngModel)]="userStatusFilter" 
+          class="form-control inline-block w-auto ml-2">
+          <option value="all">All Users</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+
+      <div class="users-table">
+        <table class="w-full">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of filterUsers()">
+              <td>{{user.name}}</td>
+              <td>{{user.username}}</td>
+              <td>{{user.email}}</td>
+              <td>{{user.role}}</td>
+              <td>
+                <span [class.status-active]="user.status === 'active'"
+                      [class.status-inactive]="user.status === 'inactive'">
+                  {{user.status}}
+                </span>
+              </td>
+              <td>
+                <button 
+                  class="status-toggle-btn"
+                  (click)="toggleUserStatus(user.id, user.status)"
+                  [class.activate-btn]="user.status === 'inactive'"
+                  [class.deactivate-btn]="user.status === 'active'">
+                  {{user.status === 'active' ? 'Deactivate' : 'Activate'}}
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
