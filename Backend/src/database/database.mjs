@@ -8,7 +8,7 @@ const poolConfig = {
   host: process.env.DB_HOST || 'localhost',  // your host, usually localhost
   port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 3306,
   user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '1234',        // your MySQL password
+  password: process.env.DB_PASSWORD || 'Nivi@blares25',        // your MySQL password
   database: process.env.DB_NAME || 'visa_management',  // your database name
   waitForConnections: true,
    maxAllowedPacket: 16 * 1024 * 1024,  
