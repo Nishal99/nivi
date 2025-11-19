@@ -1,6 +1,7 @@
 import clientModel from '../models/clientModel.mjs'
 import upload from '../middleware/upload.mjs';
 import { moveExpiredClients } from '../scheduler/archiveExpiredClients.mjs';
+import connection from '../database/database.mjs';
 
 // Helper to parse extend months which may come as labels like "1 MONTH EXTENSION 1"
 function parseExtendMonths(raw) {
@@ -68,6 +69,22 @@ const addClient = async (req, res) => {
     });
     console.log('Creating client with supplier_id:', supplier_id);
 
+    // Process agent_id - validate it exists if provided
+    let validated_agent_id = null;
+    if (agent_id) {
+        const parsed_agent_id = Array.isArray(agent_id) ? parseInt(agent_id[0]) : (agent_id ? parseInt(agent_id) : null);
+        if (parsed_agent_id) {
+            // Verify the agent exists in the database
+            const [agent_check] = await connection.execute('SELECT Id FROM agent WHERE Id = ?', [parsed_agent_id]);
+            if (agent_check.length > 0) {
+                validated_agent_id = parsed_agent_id;
+            } else {
+                console.warn(`Agent with ID ${parsed_agent_id} not found, creating client without agent reference`);
+                validated_agent_id = null;
+            }
+        }
+    }
+
     // prefer multer file name when available
     const imageName = req.file?.filename ?? image;
     const addClient = await clientModel.createClient(
@@ -85,7 +102,7 @@ const addClient = async (req, res) => {
         visa_source,
         visa_type,
         absconding_type,
-        Array.isArray(agent_id) ? parseInt(agent_id[0]) : (agent_id ? parseInt(agent_id) : null),
+        validated_agent_id,
         Array.isArray(supplier_id) ? parseInt(supplier_id[0]) : (supplier_id ? parseInt(supplier_id) : null),
         comment
     );

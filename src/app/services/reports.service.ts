@@ -2,15 +2,16 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReportService {
   // Ensure this matches the backend port where the server runs (default 3000)
-  private apiUrl = 'https://api.niviportals.cloud/api/reports/generate';
-  private apiExcelUrl = 'https://api.niviportals.cloud/api/reports/excel';
-  private agentSearchUrl = 'https://api.niviportals.cloud/api/agents/search';
+  private apiUrl = `${environment.apiUrl}/api/reports/generate`;
+  private apiExcelUrl = `${environment.apiUrl}/api/reports/excel`;
+  private agentSearchUrl = `${environment.apiUrl}/api/agents/search`;
   
   private getHeaders(isExcel: boolean = false) {
     const token = localStorage.getItem('token');

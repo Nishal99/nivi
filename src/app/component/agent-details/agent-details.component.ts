@@ -40,7 +40,7 @@ throw new Error('Method not implemented.');
   selectedAgentId: number | null = null;
   selectedAgent: any[]  = [];
 
-  private apiUrl = 'https://api.niviportals.cloud/api/agents';
+  private apiUrl = 'http://localhost:3001/api/agents';
 
 
 

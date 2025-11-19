@@ -41,11 +41,25 @@ app.use(helmet({
 }));
 
 // CORS configuration - Must be before other middleware
+const allowedOrigins = [
+  'http://localhost:4200',
+  'http://localhost:3000',
+  process.env.FRONTEND_URL // ensure FRONTEND_URL is set in .env
+].filter(Boolean);
+
 const corsOptions = {
-  origin: ['http://localhost:4200', 'http://localhost:3000', 'https://api.niviportals.cloud'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH', 'HEAD'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
-  exposedHeaders: ['Content-Range', 'X-Content-Range'],
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps, curl)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('CORS policy: Origin not allowed by CORS'), false);
+    }
+  },
+  methods: ['GET','POST','PUT','DELETE','OPTIONS','PATCH','HEAD'],
+  allowedHeaders: ['Content-Type','Authorization','X-Requested-With','Accept','Origin'],
+  exposedHeaders: ['Content-Range','X-Content-Range'],
   credentials: true,
   optionsSuccessStatus: 204
 };

@@ -19,7 +19,7 @@ export class ReportsComponent implements OnInit {
   results: any[] = [];
   agentSuggestions: any[] = [];
   isSearchingAgent = false;
-  url = 'https://api.niviportals.cloud/uploads/';
+  url = 'http://localhost:3001/uploads/';
   placeholderImage = 'assets/placeholder/user.png';
 
   constructor(private fb: FormBuilder, private reportService: ReportService) {
