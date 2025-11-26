@@ -2,16 +2,15 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReportService {
   // Ensure this matches the backend port where the server runs (default 3000)
-  private apiUrl = `${environment.apiUrl}/api/reports/generate`;
-  private apiExcelUrl = `${environment.apiUrl}/api/reports/excel`;
-  private agentSearchUrl = `${environment.apiUrl}/api/agents/search`;
+  private apiUrl = 'http://localhost:3001/api/reports/generate';
+  private apiExcelUrl = 'http://localhost:3001/api/reports/excel';
+  private agentSearchUrl = 'http://localhost:3001/api/agents/search';
   
   private getHeaders(isExcel: boolean = false) {
     const token = localStorage.getItem('token');

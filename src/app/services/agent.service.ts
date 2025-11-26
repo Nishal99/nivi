@@ -38,4 +38,8 @@ export class AgentService {
     return this.http.delete(`${this.apiUrl}/delete/${agentId}`, { headers: this.getHeaders() });
   }
 
+  reassignAndDelete(oldAgentId: number, newAgentId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/reassign-delete`, { oldAgentId, newAgentId }, { headers: this.getHeaders() });
+  }
+
 }

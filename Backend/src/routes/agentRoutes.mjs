@@ -41,6 +41,12 @@ agentRoutes.delete("/delete/:id",
     agentController.deleteAgent
 );
 
+// Reassign clients to another agent and deactivate the old agent
+agentRoutes.post('/reassign-delete',
+    checkRole([ROLES.ADMIN]),
+    agentController.reassignAndDeleteAgent
+);
+
 // Admin and users can search agents
 agentRoutes.get("/search", 
     checkRole([ROLES.ADMIN, ROLES.USER]), 

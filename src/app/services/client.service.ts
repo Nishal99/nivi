@@ -88,4 +88,11 @@ export class ClientService {
     );
   }
 
+  // Delete a history record (archived client)
+  deleteClientHistory(historyId: number): Observable<any> {
+    return this.http.delete<any>(`${this.baseURL}/delete-history/${historyId}`, {
+      headers: this.getHeaders()
+    });
+  }
+
 }

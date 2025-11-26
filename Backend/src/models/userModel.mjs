@@ -176,6 +176,19 @@ class userModel {
       throw error;
     }
   }
+
+  static async deleteUser(userId) {
+    try {
+      const [result] = await connection.execute(
+        'DELETE FROM users WHERE id = ?',
+        [userId]
+      );
+      return result.affectedRows > 0;
+    } catch (error) {
+      console.error('Error in deleteUser:', error);
+      throw error;
+    }
+  }
 }
 
 export default userModel;

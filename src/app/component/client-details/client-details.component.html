@@ -1,26 +1,37 @@
-<div class="text-start flex flex-col justify-start min-w-full divide-y divide-gray-200 ">
-    <div class="flex flex-col text-start w-full ">
-        <div class="flex flex-row justify-between items-center m-4">
-            <h2 class="text-4xl font-semibold font-sans m-0">Client Details</h2>
+<div class="text-start flex flex-col justify-start min-w-full divide-y divide-gray-200">
+    <div class="flex flex-col text-start w-full">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center m-2 sm:m-4 gap-2 sm:gap-0">
+            <h2 class="text-2xl sm:text-4xl font-semibold font-sans m-0">Client Details</h2>
             <button id="addClient" (click)="handleModel()"
-                class="m-4 bg-blue-600 px-10 py-2 font-normal rounded-lg text-white hover:bg-blue-700 hover:outline-1 outline-offset-1 transition delay-150 duration-300 ease-in-out hover:-translate-y-0.75 hover:scale-105">Add
+                class="w-full sm:w-auto m-2 sm:m-4 bg-blue-600 px-6 sm:px-10 py-2 font-normal rounded-lg text-white hover:bg-blue-700 hover:outline-1 outline-offset-1 transition delay-150 duration-300 ease-in-out hover:-translate-y-0.75 hover:scale-105">Add
                 Client</button>
         </div>
-    <div class="overflow-x-auto mx-4 my-2 p-4">
+    <div class="overflow-x-auto mx-2 sm:mx-4 my-2 p-2 sm:p-4">
 
-            <div class="flex items-center justify-between mb-6">
-                <div class="tabs flex space-x-2">
-                    <button (click)="activeTab='active'" [ngClass]="{'bg-white shadow': activeTab==='active'}" class="px-4 py-2 rounded">Active</button>
-                    <button (click)="activeTab='history'" [ngClass]="{'bg-white shadow': activeTab==='history'}" class="px-4 py-2 rounded">History</button>
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-2 sm:gap-0">
+                <div class="tabs flex space-x-2 mb-2 sm:mb-0 w-full sm:w-auto">
+                    <button (click)="activeTab='active'" 
+                            [ngClass]="{'bg-blue-500 text-white shadow': activeTab==='active', 'bg-blue-100 text-blue-800': activeTab!=='active'}" 
+                            class="flex-1 sm:flex-none px-4 py-2 rounded text-center hover:bg-blue-200 transition-colors duration-200">
+                        Active
+                    </button>
+                    <button (click)="activeTab='history'" 
+                            [ngClass]="{'bg-blue-500 text-white shadow': activeTab==='history', 'bg-blue-100 text-blue-800': activeTab!=='history'}" 
+                            class="flex-1 sm:flex-none px-4 py-2 rounded text-center hover:bg-blue-200 transition-colors duration-200">
+                        History
+                    </button>
                 </div>
-                <div class="flex items-center space-x-2">
-                    <button *ngIf="isAdmin" (click)="runArchive()" class="bg-yellow-500 px-4 py-2 rounded text-white">Run Archive Now</button>
+                <div class="flex items-center space-x-2 w-full sm:w-auto">
+                    <button *ngIf="isAdmin" (click)="runArchive()" 
+                            class="w-full sm:w-auto bg-yellow-500 px-4 py-2 rounded text-white hover:bg-yellow-600 transition-colors duration-200">
+                        Run Archive Now
+                    </button>
                 </div>
             </div>
 
             <div *ngIf="activeTab === 'active'" class="flex flex-col space-y-4">
                 <!-- Search bar -->
-                <div class="flex flex-col md:flex-row gap-4 mb-4">
+                <div class="flex flex-col gap-2 md:gap-4 mb-4">
                     <div class="search-bar flex-1 flex items-center p-2 bg-white border border-gray-300 rounded-lg shadow-sm focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
                         <span class="pl-2">
                             <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#6B7280">
@@ -32,22 +43,22 @@
                             [ngModel]="searchQuery" 
                             (ngModelChange)="onSearch($event)"
                             placeholder="Search by name, email, UID, or passport..."
-                            class="w-full px-3 py-2 bg-transparent focus:outline-none text-gray-700" />
+                            class="w-full px-3 py-2 bg-transparent focus:outline-none text-gray-700 text-sm sm:text-base" />
                         <button 
                             *ngIf="searchQuery"
                             (click)="clearSearch()"
-                            class="p-2 text-gray-400 hover:text-gray-600">
+                            class="p-2 text-gray-400 hover:text-blue-600 bg-transparent hover:bg-blue-100 rounded transition-colors duration-200">
                             <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
                                 <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
                             </svg>
                         </button>
                     </div>
                     
-                    <div class="flex-none">
+                    <div class="w-full md:w-auto">
                         <select 
                             (change)="onSearchFieldChange($event)"
                             [value]="searchField"
-                            class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-700">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-700 text-sm sm:text-base">
                             <option value="all">Search All Fields</option>
                             <option value="name">Name</option>
                             <option value="email">Email</option>
@@ -56,17 +67,16 @@
                         </select>
                     </div>
                 </div>
-                </div>
 
                 <!-- Sort and Filter Controls -->
-                <div class="flex flex-wrap gap-4 items-center bg-white p-4 rounded-lg shadow">
-                    <div class="flex items-center space-x-4">
-                        <div class="flex items-center space-x-2">
-                            <span class="font-medium">Sort by:</span>
+                <div class="flex flex-col sm:flex-row flex-wrap gap-2 md:gap-4 items-stretch sm:items-center bg-white p-2 sm:p-4 rounded-lg shadow">
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:space-x-4 w-full">
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:space-x-2 w-full sm:w-auto">
+                            <span class="font-medium text-sm sm:text-base">Sort by:</span>
                             <select 
                                 (change)="onSortChange($event)"
                                 [value]="currentSort"
-                                class="px-3 py-2 rounded border focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                class="w-full sm:w-auto px-3 py-2 rounded border focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base bg-white">
                                 <option value="">None</option>
                                 <option value="expiry">Expiry Date</option>
                                 <option value="agent">Agent</option>
@@ -75,12 +85,12 @@
                             </select>
                         </div>
 
-                        <div class="flex items-center space-x-2">
-                            <span class="font-medium">Filter:</span>
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:space-x-2 w-full sm:w-auto">
+                            <span class="font-medium text-sm sm:text-base">Filter:</span>
                             <select 
                                 (change)="onFilterChange($event)"
                                 [value]="showExpiringOnly ? 'expiring' : 'all'"
-                                class="px-3 py-2 rounded border focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                class="w-full sm:w-auto px-3 py-2 rounded border focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base bg-white">
                                 <option value="all">All</option>
                                 <option value="expiring">Expiring within 10 days</option>
                             </select>
@@ -88,77 +98,78 @@
 
                         <button *ngIf="currentSort || showExpiringOnly"
                                 (click)="clearFilters()"
-                                class="px-3 py-1 rounded border hover:bg-red-50 text-red-500">
+                                class="w-full sm:w-auto px-3 py-2 rounded border bg-blue-100 text-blue-800 hover:bg-blue-200 text-sm sm:text-base transition-colors duration-200">
                             Clear Filters
                         </button>
                     </div>
                 </div>
             </div>
 
-            <div *ngIf="error" class="error">{{ error }}</div>
+            <div *ngIf="error" class="error text-red-500 p-2">{{ error }}</div>
 
-            <!-- Active clients table -->
+            <!-- Active clients table - Desktop View -->
             <div *ngIf="activeTab === 'active' && clients.length > 0; else noActiveData"
-                class="bg-white rounded-lg shadow-lg overflow-hidden">
-                <div class="overflow-x-auto overflow-y-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
+                class="bg-white rounded-lg shadow-lg mt-4">
+                
+                <!-- Desktop Table View -->
+                <div class="hidden lg:block overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 text-sm">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Client Profile
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Full Name
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Email
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     DOB/UID
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Visa Type
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Visa Source
                                 </th>
-                               
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Visa Expired
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Agent
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Supplier
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Actions
                                 </th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             <tr *ngFor="let client of clients" class="hover:bg-gray-50 transition-colors duration-200">
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex-shrink-0 h-20 w-20">
-                                        <img [src]="getImageUrl(client.Image)"
-                                            [alt]="getClientName(client.First_Name)"
-                                            (error)="onImageError($event)"
-                                            class="h-20 w-20 rounded-full object-cover shadow-sm border border-gray-200" />
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-4 py-4 whitespace-nowrap align-middle">
+    <div class="flex items-center justify-center h-full">
+        <img [src]="getImageUrl(client.Image)"
+            [alt]="getClientName(client.First_Name)"
+            (error)="onImageError($event)"
+            class="h-16 w-16 rounded-full object-cover shadow-sm border border-gray-200 flex-shrink-0" />
+    </div>
+</td>
+                                <td class="px-4 py-4 whitespace-nowrap align-middle">
                                     <div class="text-sm font-medium text-gray-900">
                                         {{ client.First_Name }} {{ client.Last_Name }}
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-4 py-4 whitespace-nowrap align-middle">
                                     <div class="text-sm text-gray-900">{{ client.Email }}</div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-4 py-4 whitespace-nowrap align-middle">
                                     <div class="text-sm text-gray-900">{{ client.uid }}</div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-4 py-4 whitespace-nowrap align-middle">
                                     <span class="px-2 py-1 text-xs font-medium rounded-full"
                                           [ngClass]="{
                                             'bg-blue-100 text-blue-800': client.visa_type?.includes('MULTIPLE'),
@@ -167,11 +178,10 @@
                                         {{ client.visa_type }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-4 py-4 whitespace-nowrap align-middle">
                                     <div class="text-sm text-gray-900">{{ client.visa_source }}</div>
                                 </td>
-                               
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-4 py-4 whitespace-nowrap align-middle">
                                     <span class="px-2 py-1 text-xs font-medium rounded-full"
                                           [ngClass]="{
                                             'bg-red-100 text-red-800': isExpired(client.visa_expiry_date),
@@ -181,47 +191,131 @@
                                         {{ client.visa_expiry_date }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-4 py-4 whitespace-nowrap align-middle">
                                     <div class="text-sm text-gray-900">{{ client.AgentCompanyName }}</div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-4 py-4 whitespace-nowrap align-middle">
                                     <div class="text-sm text-gray-900">{{ client.SupplierCompanyName }}</div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                                    <button (click)="viewClient(client.Id)"
-                                        class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                        View
-                                    </button>
-                                    <button (click)="editClient(client.Id)"
-                                        class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                        Update
-                                    </button>
-                                    <button (click)="deleteClient(client.Id)"
-                                        class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                                        Delete
-                                    </button>
+                                <td class="px-4 py-4 whitespace-nowrap align-middle text-right text-sm font-medium">
+                                    <div class="flex flex-wrap gap-1 justify-end">
+                                        <button (click)="viewClient(client.Id)"
+                                            class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
+                                            View
+                                        </button>
+                                        <button (click)="editClient(client.Id)"
+                                            class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                                            Update
+                                        </button>
+                                        <button (click)="deleteClient(client.Id)"
+                                            class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200">
+                                            Delete
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Mobile Card View -->
+                <div class="lg:hidden">
+                    <div *ngFor="let client of clients" class="border-b border-gray-200 p-4 hover:bg-gray-50">
+                        <div class="flex items-start gap-4">
+                            <!-- Profile Image - Centered -->
+                            <div class="flex-shrink-0">
+                                <img [src]="getImageUrl(client.Image)"
+                                    [alt]="getClientName(client.First_Name)"
+                                    (error)="onImageError($event)"
+                                    class="h-16 w-16 sm:h-20 sm:w-20 rounded-full object-cover shadow-sm border border-gray-200" />
+                            </div>
+                            
+                            <!-- Client Info -->
+                            <div class="flex-1 min-w-0">
+                                <div class="flex flex-col gap-1">
+                                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 truncate">
+                                        {{ client.First_Name }} {{ client.Last_Name }}
+                                    </h3>
+                                    <p class="text-xs sm:text-sm text-gray-600 truncate">{{ client.Email }}</p>
+                                    <p class="text-xs sm:text-sm text-gray-500">UID: {{ client.uid }}</p>
+                                </div>
+
+                                <!-- Visa Info -->
+                                <div class="mt-2 flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 text-xs font-medium rounded-full"
+                                          [ngClass]="{
+                                            'bg-blue-100 text-blue-800': client.visa_type?.includes('MULTIPLE'),
+                                            'bg-green-100 text-green-800': client.visa_type?.includes('SINGLE')
+                                          }">
+                                        {{ client.visa_type }}
+                                    </span>
+                                    <span class="px-2 py-1 text-xs font-medium rounded-full"
+                                          [ngClass]="{
+                                            'bg-red-100 text-red-800': isExpired(client.visa_expiry_date),
+                                            'bg-yellow-100 text-yellow-800': isExpiringSoon(client.visa_expiry_date),
+                                            'bg-green-100 text-green-800': !isExpired(client.visa_expiry_date) && !isExpiringSoon(client.visa_expiry_date)
+                                          }">
+                                        Exp: {{ client.visa_expiry_date }}
+                                    </span>
+                                </div>
+
+                                <!-- Additional Info -->
+                                <div class="mt-2 grid grid-cols-2 gap-2 text-xs sm:text-sm">
+                                    <div>
+                                        <span class="text-gray-500">Source:</span>
+                                        <span class="ml-1 text-gray-900">{{ client.visa_source }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-500">Agent:</span>
+                                        <span class="ml-1 text-gray-900">{{ client.AgentCompanyName || 'N/A' }}</span>
+                                    </div>
+                                    <div class="col-span-2">
+                                        <span class="text-gray-500">Supplier:</span>
+                                        <span class="ml-1 text-gray-900">{{ client.SupplierCompanyName || 'N/A' }}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="mt-3 flex flex-wrap gap-2">
+                                    <button (click)="viewClient(client.Id)"
+                                        class="flex-1 sm:flex-none inline-flex items-center justify-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
+                                        View
+                                    </button>
+                                    <button (click)="editClient(client.Id)"
+                                        class="flex-1 sm:flex-none inline-flex items-center justify-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                                        Update
+                                    </button>
+                                    <button (click)="deleteClient(client.Id)"
+                                        class="flex-1 sm:flex-none inline-flex items-center justify-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200">
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <ng-template #noActiveData>
-                <p *ngIf="activeTab === 'active'">No active clients found.</p>
+                <div *ngIf="activeTab === 'active'" class="text-center py-8 text-gray-500 bg-white rounded-lg shadow mt-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <p class="mt-2">No active clients found.</p>
+                </div>
             </ng-template>
 
             <!-- History tab content -->
-            <div *ngIf="activeTab === 'history'">
+            <div *ngIf="activeTab === 'history'" class="mt-4">
                 <!-- History Filter Controls -->
-                <div class="flex flex-wrap gap-4 items-center bg-white p-4 rounded-lg shadow mb-4">
-                    <div class="flex items-center space-x-4">
-                        <div class="flex items-center space-x-2">
-                            <span class="font-medium">Filter by Status:</span>
+                <div class="flex flex-col sm:flex-row flex-wrap gap-2 md:gap-4 items-stretch sm:items-center bg-white p-2 sm:p-4 rounded-lg shadow mb-4">
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:space-x-4 w-full">
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:space-x-2 w-full sm:w-auto">
+                            <span class="font-medium text-sm sm:text-base">Filter by Status:</span>
                             <select 
                                 (change)="onHistoryStatusFilterChange($event)"
                                 [value]="selectedHistoryStatus"
-                                class="px-3 py-2 rounded border focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                class="w-full sm:w-auto px-3 py-2 rounded border focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base bg-white">
                                 <option value="all">All Status</option>
                                 <option value="archived">Archived</option>
                                 <option value="closed">Closed</option>
@@ -232,76 +326,76 @@
 
                         <button *ngIf="selectedHistoryStatus !== 'all'"
                                 (click)="clearHistoryFilters()"
-                                class="px-3 py-1 rounded border hover:bg-red-50 text-red-500">
+                                class="w-full sm:w-auto px-3 py-2 rounded border bg-blue-100 text-blue-800 hover:bg-blue-200 text-sm sm:text-base transition-colors duration-200">
                             Clear Filter
                         </button>
                     </div>
                 </div>
 
-                <div *ngIf="filteredClientHistory.length > 0; else noHistory" class="bg-white rounded-lg shadow-lg overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
+                <div *ngIf="filteredClientHistory.length > 0; else noHistory" class="bg-white rounded-lg shadow-lg">
+                    
+                    <!-- Desktop Table View -->
+                    <div class="hidden lg:block overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 text-sm">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Original ID
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Full Name
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Email
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         DOB/UID
                                     </th>
-                                   
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Visa Expiry
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Agent
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Archived At
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Status
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Actions
                                     </th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 <tr *ngFor="let h of filteredClientHistory" class="hover:bg-gray-50 transition-colors duration-200">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    <td class="px-4 py-4 whitespace-nowrap align-middle text-sm text-gray-900">
                                         {{ h.Original_Client_Id }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-4 py-4 whitespace-nowrap align-middle">
                                         <div class="text-sm font-medium text-gray-900">
                                             {{ h.First_Name ?? h.first_name }} {{ h.Last_Name ?? h.last_name }}
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-4 py-4 whitespace-nowrap align-middle">
                                         <div class="text-sm text-gray-900">{{ h.Email ?? h.email }}</div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-4 py-4 whitespace-nowrap align-middle">
                                         <div class="text-sm text-gray-900">{{ h.uid ?? h.Uid }}</div>
                                     </td>
-                                    
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-4 py-4 whitespace-nowrap align-middle">
                                         <span class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">
-                                            {{ h.Visa_expiry_date ? (h.Visa_expiry_date | date:'yyyy-MM-dd') : (h.visa_expiry_date | date:'yyyy-MM-dd') }}
+                                            {{ h.Visa_expiry_date ? (h.Visa_expiry_date.split('T')[0]) : (h.visa_expiry_date ? h.visa_expiry_date.split('T')[0] : '') }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-4 py-4 whitespace-nowrap align-middle">
                                         <div class="text-sm text-gray-900">{{ h.CompanyName }}</div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-4 py-4 whitespace-nowrap align-middle">
                                         <div class="text-sm text-gray-500">{{ h.Moved_At | date:'short' }}</div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-4 py-4 whitespace-nowrap align-middle">
                                         <span class="px-2 py-1 text-xs font-medium rounded-full"
                                               [ngClass]="{
                                                 'bg-red-100 text-red-800': h.Status === 'closed',
@@ -312,154 +406,233 @@
                                             {{ h.Status || 'archived' }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                                        <button (click)="updateHistoryStatus(h.Id, 'closed')"
-                                            class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                                            Close
-                                        </button>
-                                        <button (click)="updateHistoryStatus(h.Id, 'status changed')"
-                                            class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
-                                            Change Status
-                                        </button>
-                                        <button (click)="updateHistoryStatus(h.Id, 'absconded')"
-                                            class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
-                                            Absconded
-                                        </button>
+                                    <td class="px-4 py-4 whitespace-nowrap align-middle text-right text-sm font-medium">
+                                        <div class="flex flex-wrap gap-1 justify-end">
+                                            <button (click)="updateHistoryStatus(h.Id, 'closed')"
+                                                class="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200">
+                                                Close
+                                            </button>
+                                            <button (click)="updateHistoryStatus(h.Id, 'status changed')"
+                                                class="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors duration-200">
+                                                Change
+                                            </button>
+                                            <button (click)="updateHistoryStatus(h.Id, 'absconded')"
+                                                class="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors duration-200">
+                                                Abscond
+                                            </button>
+                                            <button *ngIf="isAdmin" (click)="deleteHistory(h.Id)"
+                                                class="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200">
+                                                Delete
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Mobile Card View for History -->
+                    <div class="lg:hidden">
+                        <div *ngFor="let h of filteredClientHistory" class="border-b border-gray-200 p-4 hover:bg-gray-50">
+                            <div class="flex flex-col gap-3">
+                                <!-- Header -->
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h3 class="text-base font-semibold text-gray-900">
+                                            {{ h.First_Name ?? h.first_name }} {{ h.Last_Name ?? h.last_name }}
+                                        </h3>
+                                        <p class="text-xs text-gray-500">ID: {{ h.Original_Client_Id }}</p>
+                                    </div>
+                                    <span class="px-2 py-1 text-xs font-medium rounded-full"
+                                          [ngClass]="{
+                                            'bg-red-100 text-red-800': h.Status === 'closed',
+                                            'bg-yellow-100 text-yellow-800': h.Status === 'status changed',
+                                            'bg-orange-100 text-orange-800': h.Status === 'absconded',
+                                            'bg-gray-100 text-gray-800': !h.Status || h.Status === 'archived'
+                                          }">
+                                        {{ h.Status || 'archived' }}
+                                    </span>
+                                </div>
+
+                                <!-- Details -->
+                                <div class="grid grid-cols-2 gap-2 text-xs sm:text-sm">
+                                    <div>
+                                        <span class="text-gray-500">Email:</span>
+                                        <span class="ml-1 text-gray-900 block truncate">{{ h.Email ?? h.email }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-500">UID:</span>
+                                        <span class="ml-1 text-gray-900">{{ h.uid ?? h.Uid }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-500">Visa Expiry:</span>
+                                        <span class="ml-1 text-gray-900">{{ h.Visa_expiry_date ? (h.Visa_expiry_date.split('T')[0]) : (h.visa_expiry_date ? h.visa_expiry_date.split('T')[0] : 'N/A') }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-500">Agent:</span>
+                                        <span class="ml-1 text-gray-900">{{ h.CompanyName || 'N/A' }}</span>
+                                    </div>
+                                    <div class="col-span-2">
+                                        <span class="text-gray-500">Archived:</span>
+                                        <span class="ml-1 text-gray-900">{{ h.Moved_At | date:'short' }}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="flex flex-wrap gap-2">
+                                    <button (click)="updateHistoryStatus(h.Id, 'closed')"
+                                        class="flex-1 inline-flex items-center justify-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-red-600 hover:bg-red-700 transition-colors duration-200">
+                                        Close
+                                    </button>
+                                    <button (click)="updateHistoryStatus(h.Id, 'status changed')"
+                                        class="flex-1 inline-flex items-center justify-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-yellow-600 hover:bg-yellow-700 transition-colors duration-200">
+                                        Change Status
+                                    </button>
+                                    <button (click)="updateHistoryStatus(h.Id, 'absconded')"
+                                        class="flex-1 inline-flex items-center justify-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-orange-600 hover:bg-orange-700 transition-colors duration-200">
+                                        Absconded
+                                    </button>
+                                    <button *ngIf="isAdmin" (click)="deleteHistory(h.Id)"
+                                        class="w-full inline-flex items-center justify-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-red-600 hover:bg-red-700 transition-colors duration-200">
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <ng-template #noHistory>
-                    <div class="text-center py-8 text-gray-500">
-                        <p *ngIf="selectedHistoryStatus === 'all'">No archived clients found.</p>
-                        <p *ngIf="selectedHistoryStatus !== 'all'">No clients found with status "{{ selectedHistoryStatus }}".</p>
+                    <div class="text-center py-8 text-gray-500 bg-white rounded-lg shadow">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p *ngIf="selectedHistoryStatus === 'all'" class="mt-2">No archived clients found.</p>
+                        <p *ngIf="selectedHistoryStatus !== 'all'" class="mt-2">No clients found with status "{{ selectedHistoryStatus }}".</p>
                     </div>
                 </ng-template>
             </div>
 
         </div>
     </div>
-
+</div>
 
 <!-- Add/Edit Client Modal -->
-<div [ngStyle]="{'display': openModel}" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 backdrop-blur-sm p-4"
+<div [ngStyle]="{'display': openModel}" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 backdrop-blur-sm p-2 sm:p-4"
     id="modal">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-y-auto">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg sm:max-w-2xl md:max-w-4xl lg:max-w-6xl max-h-[90vh] overflow-y-auto">
         <!-- Modal Header -->
-        <div class="sticky top-0 bg-white px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-            <h3 class="text-2xl font-semibold text-gray-800">{{isEditMode ? 'Edit Client' : 'Add New Client'}}</h3>
+        <div class="sticky top-0 bg-white px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 flex justify-between items-center z-10">
+            <h3 class="text-xl sm:text-2xl font-semibold text-gray-800">{{isEditMode ? 'Edit Client' : 'Add New Client'}}</h3>
             <button type="button" (click)="handleModelClose()"
-                class="p-2 hover:bg-red-50 rounded-lg transition-colors duration-200">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-500 hover:text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="p-2 hover:bg-blue-100 rounded-lg transition-colors duration-200 bg-transparent hover:bg-blue-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 sm:w-6 sm:h-6 text-gray-500 hover:text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
         </div>
 
-        <form class="p-6" [formGroup]="saveClient" (ngSubmit)="createClient()">
+        <form class="p-3 sm:p-6" [formGroup]="saveClient" (ngSubmit)="createClient()">
             <!-- Form Sections -->
-            <div class="grid grid-rows md:grid-rows xl:grid-rows gap-6">
+            <div class="grid grid-rows gap-4 sm:gap-6">
 
                 <!-- Personal Information Section -->
-                <div class="space-y-6 bg-white p-6 rounded-lg shadow-sm border border-gray-100 h-auto">
-                    <h4 class="text-lg font-medium text-gray-900 border-b pb-2">Personal Information</h4>
+                <div class="space-y-4 sm:space-y-6 bg-white p-3 sm:p-6 rounded-lg shadow-sm border border-gray-100 h-auto">
+                    <h4 class="text-base sm:text-lg font-medium text-gray-900 border-b pb-2">Personal Information</h4>
                     
                     <!-- Profile Image -->
                     <div class="flex flex-col items-center space-y-4">
-                        <div class="w-32 h-32 relative rounded-full overflow-hidden border-2 border-gray-200">
+                        <div class="w-24 h-24 sm:w-32 sm:h-32 relative rounded-full overflow-hidden border-2 border-gray-200">
                             <input type="file" 
                                    id="image" 
                                    (change)="onFileSelect($event)" 
                                    accept="image/*"
                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
                             <div class="absolute inset-0 flex items-center justify-center bg-gray-100">
-                                <svg *ngIf="!currentImageName" xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                <svg *ngIf="!currentImageName" xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 sm:h-12 sm:w-12 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                                 </svg>
                                 <img *ngIf="currentImageName" [src]="getImageUrl(currentImageName)" [alt]="currentImageName" class="w-full h-full object-cover" />
                             </div>
                         </div>
                         <span *ngIf="saveClient.get('image')?.invalid && saveClient.get('image')?.touched"
-                              class="text-red-500 text-sm">Image is required</span>
-                        <span *ngIf="currentImageName" class="text-sm text-gray-600">{{ currentImageName }}</span>
+                              class="text-red-500 text-xs sm:text-sm">Image is required</span>
+                        <span *ngIf="currentImageName" class="text-xs sm:text-sm text-gray-600 text-center break-all max-w-[200px]">{{ currentImageName }}</span>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                         <!-- First Name -->
                         <div class="form-group">
-                            <label for="fname" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                            <label for="fname" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">First Name</label>
                             <input type="text" 
                                    id="fname" 
                                    placeholder="First Name" 
                                    formControlName="fname"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                                   class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
                             <span *ngIf="saveClient.get('fname')?.invalid && saveClient.get('fname')?.touched"
-                                  class="text-red-500 text-sm mt-1">First name is required (min 2 characters)</span>
+                                  class="text-red-500 text-xs mt-1">First name is required (min 2 characters)</span>
                         </div>
 
                         <!-- Last Name -->
                         <div class="form-group">
-                            <label for="lname" class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                            <label for="lname" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Last Name</label>
                             <input type="text" 
                                    id="lname" 
                                    placeholder="Last Name" 
                                    formControlName="lname"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                                   class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
                             <span *ngIf="saveClient.get('lname')?.invalid && saveClient.get('lname')?.touched"
-                                  class="text-red-500 text-sm mt-1">Last name is required (min 2 characters)</span>
+                                  class="text-red-500 text-xs mt-1">Last name is required (min 2 characters)</span>
                         </div>
 
                         <!-- Email -->
                         <div class="form-group">
-                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <label for="email" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Email</label>
                             <input type="email" 
                                    id="email" 
                                    placeholder="Email address" 
                                    formControlName="email"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                                   class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
                             <span *ngIf="saveClient.get('email')?.invalid && saveClient.get('email')?.touched"
-                                  class="text-red-500 text-sm mt-1">Valid email is required</span>
+                                  class="text-red-500 text-xs mt-1">Valid email is required</span>
                         </div>
 
                         <!-- DOB/UID -->
                         <div class="form-group">
-                            <label for="uid" class="block text-sm font-medium text-gray-700 mb-1">DOB/UID</label>
+                            <label for="uid" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">DOB/UID</label>
                             <input type="text" 
                                    id="uid" 
                                    placeholder="Enter DOB/UID" 
                                    formControlName="uid"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                                   class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
                             <span *ngIf="saveClient.get('uid')?.invalid && saveClient.get('uid')?.touched"
-                                  class="text-red-500 text-sm mt-1">DOB/UID is required</span>
+                                  class="text-red-500 text-xs mt-1">DOB/UID is required</span>
                         </div>
 
                         <!-- Passport No -->
-                        <div class="form-group">
-                            <label for="passport" class="block text-sm font-medium text-gray-700 mb-1">Passport No</label>
+                        <div class="form-group sm:col-span-2 md:col-span-1">
+                            <label for="passport" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Passport No</label>
                             <input type="text" 
                                    id="passport" 
                                    placeholder="Enter passport number" 
                                    formControlName="passport_no"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                                   class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
                             <span *ngIf="saveClient.get('passport_no')?.invalid && saveClient.get('passport_no')?.touched"
-                                  class="text-red-500 text-sm mt-1">Passport number is required</span>
+                                  class="text-red-500 text-xs mt-1">Passport number is required</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Visa Information Section -->
-                <div class="space-y-6 bg-white p-6 rounded-lg shadow-sm border border-gray-100 h-auto">
-                    <h4 class="text-lg font-medium text-gray-900 border-b pb-2">Visa Information</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="space-y-4 sm:space-y-6 bg-white p-3 sm:p-6 rounded-lg shadow-sm border border-gray-100 h-auto">
+                    <h4 class="text-base sm:text-lg font-medium text-gray-900 border-b pb-2">Visa Information</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                         <!-- Visa Type -->
                         <div class="form-group">
-                            <label for="visa_type" class="block text-sm font-medium text-gray-700 mb-1">Visa Type</label>
+                            <label for="visa_type" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Visa Type</label>
                             <select id="visa_type" 
                                     formControlName="visa_type"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
+                                    class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
                                 <option value="" disabled>Select visa type</option>
                                 <option value="30 DAYS SINGLE ENTRY">30 DAYS SINGLE ENTRY</option>
                                 <option value="30 DAYS MULTIPLE ENTRY">30 DAYS MULTIPLE ENTRY</option>
@@ -467,15 +640,15 @@
                                 <option value="60 DAYS MULTIPLE ENTRY">60 DAYS MULTIPLE ENTRY</option>
                             </select>
                             <span *ngIf="saveClient.get('visa_type')?.invalid && saveClient.get('visa_type')?.touched"
-                                  class="text-red-500 text-sm mt-1">Visa type is required</span>
+                                  class="text-red-500 text-xs mt-1">Visa type is required</span>
                         </div>
 
                         <!-- Visa Source -->
                         <div class="form-group">
-                            <label for="visa_source" class="block text-sm font-medium text-gray-700 mb-1">Visa Source</label>
+                            <label for="visa_source" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Visa Source</label>
                             <select id="visa_source" 
                                     formControlName="visa_source"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
+                                    class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
                                 <option value="" disabled>Select visa source</option>
                                 <option value="DUBAI">DUBAI</option>
                                 <option value="SHARJAH">SHARJAH</option>
@@ -483,51 +656,57 @@
                                 <option value="RAS">RAS</option>
                             </select>
                             <span *ngIf="saveClient.get('visa_source')?.invalid && saveClient.get('visa_source')?.touched"
-                                  class="text-red-500 text-sm mt-1">Visa source is required</span>
+                                  class="text-red-500 text-xs mt-1">Visa source is required</span>
                         </div>
 
                         <!-- Visa Approved Date -->
                         <div class="form-group">
-                            <label for="visa_approved_at" class="block text-sm font-medium text-gray-700 mb-1">Visa Approved Date</label>
+                            <label for="visa_approved_at" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Visa Approved Date</label>
                             <input type="date" 
                                    id="visa_approved_at" 
                                    formControlName="visa_approved_at"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                                   class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
                             <span *ngIf="saveClient.get('visa_approved_at')?.invalid && saveClient.get('visa_approved_at')?.touched"
-                                  class="text-red-500 text-sm mt-1">Visa approved date is required</span>
+                                  class="text-red-500 text-xs mt-1">Visa approved date is required</span>
                         </div>
 
                         <!-- Visa Expiry Date -->
                         <div class="form-group">
-                            <label for="visa_expiry_date" class="block text-sm font-medium text-gray-700 mb-1">Visa Expiry Date</label>
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-1 gap-1">
+                                <label for="visa_expiry_date" class="block text-xs sm:text-sm font-medium text-gray-700">Visa Expiry Date</label>
+                                <button type="button" (click)="changeVisaExpiryBack(selectedClientId)" *ngIf="isEditMode" 
+                                        class="text-xs sm:text-sm text-yellow-800 hover:underline cursor-pointer bg-yellow-100 hover:bg-yellow-200 px-2 py-1 rounded transition-colors duration-200">
+                                    Back to revert
+                                </button>
+                            </div>
                             <input type="date" 
                                    id="visa_expiry_date" 
                                    formControlName="visa_expiry_date"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                                   class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
                             <span *ngIf="saveClient.get('visa_expiry_date')?.invalid && saveClient.get('visa_expiry_date')?.touched"
-                                  class="text-red-500 text-sm mt-1">Visa expiry date is required</span>
+                                  class="text-red-500 text-xs mt-1">Visa expiry date is required</span>
                         </div>
 
                         <!-- Absconding Type -->
                         <div class="form-group">
-                            <label for="absconding_type" class="block text-sm font-medium text-gray-700 mb-1">Absconding Type</label>
+                            <label for="absconding_type" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Absconding Type</label>
                             <select id="absconding_type" 
                                     formControlName="absconding_type"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
+                                    class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
                                 <option value="none" disabled>Select absconding type</option>
                                 <option value="private">Private</option>
                                 <option value="zero">Zero</option>
                             </select>
                             <span *ngIf="saveClient.get('absconding_type')?.invalid && saveClient.get('absconding_type')?.touched"
-                                  class="text-red-500 text-sm mt-1">Absconding type is required</span>
+                                  class="text-red-500 text-xs mt-1">Absconding type is required</span>
                         </div>
 
                         <!-- Extended Period -->
                         <div class="form-group" *ngIf="isEditMode">
-                            <label for="visa_extend_for" class="block text-sm font-medium text-gray-700 mb-1">Extended Period</label>
+                            <label for="visa_extend_for" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Extended Period</label>
                             <select id="visa_extend_for" 
                                     formControlName="visa_extend_for"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
+                                    class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
                                 <option value="none" disabled>Select extended period</option>
                                 <option value="1 MONTH EXTENSION 1">1 MONTH EXTENSION 1</option>
                                 <option value="1 MONTH EXTENSION 2">1 MONTH EXTENSION 2</option>
@@ -537,63 +716,63 @@
                 </div>
 
                 <!-- References Section -->
-                <div class="space-y-6 bg-white p-6 rounded-lg shadow-sm border border-gray-100 h-auto">
-                    <h4 class="text-lg font-medium text-gray-900 border-b pb-2">References</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="space-y-4 sm:space-y-6 bg-white p-3 sm:p-6 rounded-lg shadow-sm border border-gray-100 h-auto">
+                    <h4 class="text-base sm:text-lg font-medium text-gray-900 border-b pb-2">References</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                         <!-- Agent Search -->
                         <div class="form-group">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Agent (Optional)</label>
+                            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Agent (Optional)</label>
                             <button type="button" 
                                     (click)="openAgentSearchModal()"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-left bg-white hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                <span class="text-gray-500">Search for an agent...</span>
+                                    class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm text-left bg-indigo-100 text-indigo-800 hover:bg-indigo-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors duration-200">
+                                <span class="text-indigo-800">Search for an agent...</span>
                             </button>
-                            <div *ngIf="selectedAgent" class="mt-2 p-3 bg-green-50 border border-green-200 rounded-md">
-                                <div class="font-medium text-green-800">Selected Agent</div>
-                                <div class="text-sm text-green-700 mt-1">{{ selectedAgent.name }}</div>
+                            <div *ngIf="selectedAgent" class="mt-2 p-2 sm:p-3 bg-green-50 border border-green-200 rounded-md">
+                                <div class="font-medium text-green-800 text-xs sm:text-sm">Selected Agent</div>
+                                <div class="text-xs sm:text-sm text-green-700 mt-1">{{ selectedAgent.name }}</div>
                             </div>
                         </div>
 
                         <!-- Supplier Search -->
                         <div class="form-group">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Supplier (Optional)</label>
+                            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Supplier (Optional)</label>
                             <button type="button" 
                                     (click)="openSupplierSearchModal()"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-left bg-white hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                <span class="text-gray-500">Search for a supplier...</span>
+                                    class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm text-left bg-indigo-100 text-indigo-800 hover:bg-indigo-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors duration-200">
+                                <span class="text-indigo-800">Search for a supplier...</span>
                             </button>
-                            <div *ngIf="selectedSupplier" class="mt-2 p-3 bg-green-50 border border-green-200 rounded-md">
-                                <div class="font-medium text-green-800">Selected Supplier</div>
-                                <div class="text-sm text-green-700 mt-1">{{ selectedSupplier.company_name }}</div>
+                            <div *ngIf="selectedSupplier" class="mt-2 p-2 sm:p-3 bg-green-50 border border-green-200 rounded-md">
+                                <div class="font-medium text-green-800 text-xs sm:text-sm">Selected Supplier</div>
+                                <div class="text-xs sm:text-sm text-green-700 mt-1">{{ selectedSupplier.company_name }}</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Comments Section -->
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 h-auto">
+                <div class="bg-white p-3 sm:p-6 rounded-lg shadow-sm border border-gray-100 h-auto">
                     <div class="form-group">
-                        <label for="comment" class="block text-sm font-medium text-gray-700 mb-1">Comments</label>
+                        <label for="comment" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Comments</label>
                         <textarea id="comment" 
                                  placeholder="Add any additional comments..." 
                                  formControlName="comment"
-                                 rows="4"
-                                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"></textarea>
+                                 rows="3"
+                                 class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"></textarea>
                     </div>
                 </div>
 
             </div>
 
             <!-- Form Actions -->
-            <div class="sticky bottom-0 bg-white px-6 py-4 border-t border-gray-200 mt-6 flex justify-end gap-4">
+            <div class="sticky bottom-0 bg-white px-3 sm:px-6 py-3 sm:py-4 border-t border-gray-200 mt-4 sm:mt-6 flex flex-col sm:flex-row justify-end gap-2 sm:gap-4">
                 <button type="button" 
                         (click)="handleModelClose()"
-                        class="px-6 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        class="w-full sm:w-auto px-4 sm:px-6 py-2 border border-indigo-300 rounded-md shadow-sm text-sm font-medium text-indigo-800 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
                     Cancel
                 </button>
                 <button type="submit" 
                         [disabled]="saveClient.invalid"
-                        class="px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed">
+                        class="w-full sm:w-auto px-4 sm:px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200">
                     {{ isEditMode ? 'Update Client' : 'Add Client' }}
                 </button>
             </div>
@@ -615,28 +794,30 @@
     </div>
 </div>
 
-<div [ngStyle]="{'display': openViewModel}" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 backdrop-blur-sm p-4" id="modal">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-y-auto">
+<!-- View Client Modal -->
+<div [ngStyle]="{'display': openViewModel}" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 backdrop-blur-sm p-2 sm:p-4" id="modal">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg sm:max-w-2xl md:max-w-4xl lg:max-w-6xl max-h-[90vh] overflow-y-auto">
         <!-- Modal Header -->
-        <div class="sticky top-0 bg-white px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-            <h3 class="text-2xl font-semibold text-gray-800">View Client</h3>
-            <button type="button" (click)="handleViewModelClose()" class="p-2 hover:bg-red-50 rounded-lg transition-colors duration-200">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-500 hover:text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div class="sticky top-0 bg-white px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 flex justify-between items-center z-10">
+            <h3 class="text-xl sm:text-2xl font-semibold text-gray-800">View Client</h3>
+            <button type="button" (click)="handleViewModelClose()" 
+                    class="p-2 hover:bg-blue-100 rounded-lg transition-colors duration-200 bg-transparent hover:bg-blue-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 sm:w-6 sm:h-6 text-gray-500 hover:text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
         </div>
 
         <!-- Content -->
-        <div class="p-6">
-            <div class="grid grid-rows md:grid-rows xl:grid-rows gap-6">
+        <div class="p-3 sm:p-6">
+            <div class="grid grid-rows gap-4 sm:gap-6">
                 <!-- Personal Information Section -->
-                <div class="space-y-6 bg-white p-6 rounded-lg shadow-sm border border-gray-100 h-auto">
-                    <h4 class="text-lg font-medium text-gray-900 border-b pb-2">Personal Information</h4>
+                <div class="space-y-4 sm:space-y-6 bg-white p-3 sm:p-6 rounded-lg shadow-sm border border-gray-100 h-auto">
+                    <h4 class="text-base sm:text-lg font-medium text-gray-900 border-b pb-2">Personal Information</h4>
                     
                     <!-- Profile Image -->
                     <div class="flex flex-col items-center space-y-4">
-                        <div class="w-32 h-32 relative rounded-full overflow-hidden border-2 border-gray-200">
+                        <div class="w-24 h-24 sm:w-32 sm:h-32 relative rounded-full overflow-hidden border-2 border-gray-200">
                             <img [src]="getImageUrl(person?.image)" 
                                  [alt]="getClientName(person?.first_name)"
                                  (error)="onImageError($event)"
@@ -644,133 +825,126 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                         <!-- First Name -->
                         <div class="form-group">
-                            <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                            <label for="firstName" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">First Name</label>
                             <input type="text" id="firstName" [value]="person?.first_name" [readOnly]="isViewMode"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
+                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
                         </div>
                         
                         <!-- Last Name -->
                         <div class="form-group">
-                            <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                            <label for="lastName" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Last Name</label>
                             <input type="text" id="lastName" [value]="person?.last_name" [readOnly]="isViewMode"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
+                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
                         </div>
 
                         <!-- Email -->
                         <div class="form-group">
-                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <label for="email" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Email</label>
                             <input type="email" id="email" [value]="person?.email" [readOnly]="isViewMode"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
+                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
                         </div>
 
                         <!-- DOB/UID -->
                         <div class="form-group">
-                            <label for="uid" class="block text-sm font-medium text-gray-700 mb-1">DOB/UID</label>
+                            <label for="uid" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">DOB/UID</label>
                             <input type="text" id="uid" [value]="person?.uid" [readOnly]="isViewMode"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
+                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
                         </div>
 
                         <!-- Passport No -->
-                        <div class="form-group">
-                            <label for="passport" class="block text-sm font-medium text-gray-700 mb-1">Passport No</label>
+                        <div class="form-group sm:col-span-2 md:col-span-1">
+                            <label for="passport" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Passport No</label>
                             <input type="text" id="passport" [value]="person?.passport_no" [readOnly]="isViewMode"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
+                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
                         </div>
                     </div>
                 </div>
 
                 <!-- Visa Information Section -->
-                <div class="space-y-6 bg-white p-6 rounded-lg shadow-sm border border-gray-100 h-auto">
-                    <h4 class="text-lg font-medium text-gray-900 border-b pb-2">Visa Information</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="space-y-4 sm:space-y-6 bg-white p-3 sm:p-6 rounded-lg shadow-sm border border-gray-100 h-auto">
+                    <h4 class="text-base sm:text-lg font-medium text-gray-900 border-b pb-2">Visa Information</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                         <!-- Visa Type -->
                         <div class="form-group">
-                            <label for="visa_type" class="block text-sm font-medium text-gray-700 mb-1">Visa Type</label>
+                            <label for="visa_type" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Visa Type</label>
                             <input type="text" id="visa_type" [value]="person?.visa_type" [readOnly]="isViewMode"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
+                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
                         </div>
 
                         <!-- Visa Source -->
                         <div class="form-group">
-                            <label for="visa_source" class="block text-sm font-medium text-gray-700 mb-1">Visa Source</label>
+                            <label for="visa_source" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Visa Source</label>
                             <input type="text" id="visa_source" [value]="person?.visa_source" [readOnly]="isViewMode"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
+                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
                         </div>
 
                         <!-- Visa Approved Date -->
                         <div class="form-group">
-                            <label for="visa_approved_at" class="block text-sm font-medium text-gray-700 mb-1">Visa Approved Date</label>
+                            <label for="visa_approved_at" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Visa Approved Date</label>
                             <input type="date" id="visa_approved_at" [value]="person?.visa_approved_at" [readOnly]="isViewMode"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
+                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
                         </div>
 
                         <!-- Visa Expiry Date -->
                         <div class="form-group">
-                            <label for="visa_expiry_date" class="block text-sm font-medium text-gray-700 mb-1">Visa Expiry Date</label>
+                            <label for="visa_expiry_date" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Visa Expiry Date</label>
                             <input type="date" id="visa_expiry_date" [value]="person?.visa_expiry_date" [readOnly]="isViewMode"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
-                        </div>
-
-                        <!-- Visa Expiry Date -->
-                        <div class="form-group">
-                            <label for="visa_expiry" class="block text-sm font-medium text-gray-700 mb-1">Visa Expiry Date</label>
-                            <input type="text" id="visa_expiry" [value]="person?.visa_expiry_date" [readOnly]="isViewMode"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
+                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
                         </div>
 
                         <!-- Absconding Type -->
                         <div class="form-group">
-                            <label for="absconding_type" class="block text-sm font-medium text-gray-700 mb-1">Absconding Type</label>
+                            <label for="absconding_type" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Absconding Type</label>
                             <input type="text" id="absconding_type" [value]="person?.absconding_type" [readOnly]="isViewMode"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
+                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
                         </div>
 
                         <!-- Extended Period -->
                         <div class="form-group">
-                            <label for="visa_extend_for" class="block text-sm font-medium text-gray-700 mb-1">Extended Period</label>
+                            <label for="visa_extend_for" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Extended Period</label>
                             <input type="text" id="visa_extend_for" [value]="person?.visa_extend_for" [readOnly]="isViewMode"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
+                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
                         </div>
                     </div>
                 </div>
 
                 <!-- References Section -->
-                <div class="space-y-6 bg-white p-6 rounded-lg shadow-sm border border-gray-100 h-auto">
-                    <h4 class="text-lg font-medium text-gray-900 border-b pb-2">References</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="space-y-4 sm:space-y-6 bg-white p-3 sm:p-6 rounded-lg shadow-sm border border-gray-100 h-auto">
+                    <h4 class="text-base sm:text-lg font-medium text-gray-900 border-b pb-2">References</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                         <!-- Agent -->
                         <div class="form-group">
-                            <label for="agent" class="block text-sm font-medium text-gray-700 mb-1">Agent</label>
+                            <label for="agent" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Agent</label>
                             <input type="text" id="agent" [value]="person?.CompanyName" [readOnly]="isViewMode"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
+                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
                         </div>
 
                         <!-- Supplier -->
                         <div class="form-group">
-                            <label for="supplier" class="block text-sm font-medium text-gray-700 mb-1">Supplier</label>
+                            <label for="supplier" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Supplier</label>
                             <input type="text" id="supplier" [value]="person?.SupplierCompanyName" [readOnly]="isViewMode"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
+                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50" />
                         </div>
                     </div>
                 </div>
 
                 <!-- Comments Section -->
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 h-auto">
+                <div class="bg-white p-3 sm:p-6 rounded-lg shadow-sm border border-gray-100 h-auto">
                     <div class="form-group">
-                        <label for="comment" class="block text-sm font-medium text-gray-700 mb-1">Comments</label>
-                        <textarea id="comment" [value]="person?.comment" [readOnly]="isViewMode" rows="4"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 resize-none"></textarea>
+                        <label for="comment" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Comments</label>
+                        <textarea id="comment" [value]="person?.comment" [readOnly]="isViewMode" rows="3"
+                            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 resize-none"></textarea>
                     </div>
                 </div>
             </div>
 
             <!-- Footer Actions -->
-            <div class="sticky bottom-0 bg-white px-6 py-4 border-t border-gray-200 mt-6 flex justify-end gap-4">
+            <div class="sticky bottom-0 bg-white px-3 sm:px-6 py-3 sm:py-4 border-t border-gray-200 mt-4 sm:mt-6 flex justify-end">
                 <button type="button" (click)="handleViewModelClose()"
-                    class="px-6 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    class="w-full sm:w-auto px-4 sm:px-6 py-2 border border-indigo-300 rounded-md shadow-sm text-sm font-medium text-indigo-800 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
                     Close
                 </button>
             </div>

@@ -52,6 +52,8 @@ throw new Error('Method not implemented.');
       contactPersonName: ['', Validators.required],
       contactPersonEmail: ['', [Validators.required, Validators.email]],
       contactPersonPhone: ['', Validators.required],
+      // Checkbox in template — store as boolean here and convert on submit
+      status: [true]
     });
   }
 
@@ -72,11 +74,17 @@ throw new Error('Method not implemented.');
       },
     });
 
+    // Convert boolean checkbox value to string expected by backend
+    const formValue = { ...this.agentForm.value };
+    if (typeof formValue.status === 'boolean') {
+      formValue.status = formValue.status ? 'active' : 'inactive';
+    }
+
     if (this.isEditMode && this.selectedAgentId) {
       // Update existing agent
       const updatedAgent = {
         id: this.selectedAgentId,
-        ...this.agentForm.value,
+        ...formValue,
       };
 
       this.agentService.editAgent(updatedAgent).subscribe({
@@ -103,7 +111,7 @@ throw new Error('Method not implemented.');
       });
     } else {
       // Create new agent
-      this.agentService.addAgent(this.agentForm.value).subscribe({
+      this.agentService.addAgent(formValue).subscribe({
         next: (response) => {
           Swal.fire({
             position: 'center',
@@ -179,7 +187,48 @@ throw new Error('Method not implemented.');
       contactPersonName: agentToEdit.ContactPersonName ?? agentToEdit.contactPersonName ?? '',
       contactPersonEmail: agentToEdit.ContactPersonEmail ?? agentToEdit.contactPersonEmail ?? '',
       contactPersonPhone: agentToEdit.ContactPersonPhone ?? agentToEdit.contactPersonPhone ?? '',
+      // The API stores status as a string ('active'|'inactive'), our checkbox uses boolean
+      status: (agentToEdit.status ?? 'active') === 'active'
     });
+  }
+
+  async deleteAgentWithReassign(agent: any) {
+    // Prepare list of other agents to reassign clients
+    const otherAgents = this.agentsList.filter(a => (a.Id ?? a.id) !== (agent.Id ?? agent.id) && (a.status ?? 'active') === 'active');
+    if (otherAgents.length === 0) {
+      alert('Please create or activate another agent before deleting this one.');
+      return;
+    }
+
+    // Build HTML select for Swal
+    const options = otherAgents.map(a => `<option value="${a.Id ?? a.id}">${a.CompanyName ?? a.companyName}</option>`).join('');
+    const { value: newAgentId } = await Swal.fire({
+      title: 'Reassign clients before deleting agent',
+      html: `
+        <p class="mb-2">Select the agent to reassign existing clients to:</p>
+        <select id="reassignSelect" class="swal2-select form-select">${options}</select>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Reassign & Delete',
+      preConfirm: () => {
+        const select = (document.getElementById('reassignSelect') as HTMLSelectElement);
+        return select ? select.value : null;
+      }
+    });
+
+    if (newAgentId) {
+      // call service with proper params
+      this.agentService.reassignAndDelete(agent.Id ?? agent.id, Number(newAgentId)).subscribe({
+        next: () => {
+          Swal.fire('Success', 'Clients reassigned and agent deactivated', 'success');
+          this.getAgentList();
+        },
+        error: (err) => {
+          console.error('Error reassigning agent:', err);
+          Swal.fire('Error', 'Failed to reassign and delete agent', 'error');
+        }
+      });
+    }
   }
 
 
@@ -267,7 +316,7 @@ throw new Error('Method not implemented.');
     this.openModel = this.isVisible ? "flex" : "none";
     this.isEditMode = false;
     this.selectedAgentId = null;
-    this.agentForm.reset();
+    this.agentForm.reset({ status: true });
   }
 
   handleModelClose() {
@@ -275,7 +324,7 @@ throw new Error('Method not implemented.');
     this.openModel = "none";
     this.isEditMode = false;
     this.selectedAgentId = null;
-    this.agentForm.reset();
+    this.agentForm.reset({ status: true });
   }
 
 

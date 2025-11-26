@@ -124,6 +124,34 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  deleteUser(userId: string) {
+    Swal.fire({
+      title: 'Delete User',
+      text: 'Are you sure you want to delete this user? This action cannot be undone.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.authService.deleteUser(userId).subscribe({
+          next: () => {
+            Swal.fire('Deleted', 'User deleted successfully', 'success');
+            this.loadUsers();
+          },
+          error: (error) => {
+            Swal.fire('Error', error.error?.message || 'Failed to delete user', 'error');
+          }
+        });
+      }
+    });
+  }
+
+  // In ProfileComponent class
+trackByUserId(index: number, user: any): string {
+  return user.id;
+}
+
   filterUsers() {
     if (this.userStatusFilter === 'all') {
       return this.users;

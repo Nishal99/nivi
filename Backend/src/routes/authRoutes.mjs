@@ -2,6 +2,7 @@ import express from 'express';
 import authController from '../controller/authController.mjs';
 import { body } from 'express-validator';
 import {authenticateToken} from '../middleware/authMiddleware.mjs';
+import { checkRole } from '../middleware/roleMiddleware.mjs';
 
 const router = express.Router();
 
@@ -31,13 +32,17 @@ router.put('/profile', [
 ], authController.updateProfile);
 
 // Get all users (admin only)
-router.get('/users', authenticateToken, authController.getAllUsers);
+router.get('/users', authenticateToken, checkRole(['admin']), authController.getAllUsers);
 
 // Update user status (admin only)
 router.patch('/users/:userId/status', [
     authenticateToken,
+    checkRole(['admin']),
     body('status').isIn(['active', 'inactive'])
 ], authController.updateUserStatus);
+
+// Delete a user (admin only)
+router.delete('/users/:userId', authenticateToken, checkRole(['admin']), authController.deleteUser);
 
 // Password reset routes
 router.post('/forgot-password', [

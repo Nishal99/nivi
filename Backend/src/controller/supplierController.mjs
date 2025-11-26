@@ -62,10 +62,24 @@ const supplierController = {
             if (!success) {
                 return res.status(404).json({ message: 'Supplier not found' });
             }
-            res.json({ message: 'Supplier deleted successfully' });
+            res.json({ message: 'Supplier deactivated successfully' });
         } catch (error) {
             console.error('Error in deleteSupplier:', error);
             res.status(500).json({ message: 'Error deleting supplier' });
+        }
+    },
+
+    reassignAndDeleteSupplier: async (req, res) => {
+        try {
+            const { oldSupplierId, newSupplierId } = req.body;
+            if (!oldSupplierId || !newSupplierId) {
+                return res.status(400).json({ message: 'oldSupplierId and newSupplierId are required' });
+            }
+            await supplierModel.reassignClientsAndDelete(oldSupplierId, newSupplierId);
+            res.json({ message: 'Clients reassigned and supplier deleted' });
+        } catch (error) {
+            console.error('Error in reassignAndDeleteSupplier:', error);
+            res.status(500).json({ message: 'Error reassigning and deleting supplier' });
         }
     },
 

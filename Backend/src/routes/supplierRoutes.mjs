@@ -44,4 +44,10 @@ router.delete('/:id',
     checkRole([ROLES.ADMIN]), 
     supplierController.deleteSupplier);
 
+// Reassign clients to another supplier and deactivate old supplier
+router.post('/reassign-delete',
+    checkRole([ROLES.ADMIN]),
+    supplierController.reassignAndDeleteSupplier
+);
+
 export default router;

@@ -9,7 +9,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.mjs",
-    "dev": "nodemon server.mjs"
+    "dev": "nodemon server.mjs",
+    "migrate": "node src/scripts/apply_migrations.mjs"
   },
   "dependencies": {
     "@angular/compiler": "^19.2.15",

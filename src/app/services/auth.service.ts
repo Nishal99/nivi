@@ -48,6 +48,12 @@ export class AuthService {
     });
   }
 
+  deleteUser(userId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/api/auth/users/${userId}`, {
+      headers: this.getHeaders()
+    });
+  }
+
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
     return new HttpHeaders(token ? { Authorization: `Bearer ${token}` } : {});

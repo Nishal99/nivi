@@ -3,7 +3,17 @@ import connection from "../database/database.mjs";
 
 
 class clientModel {
-    static async createClient(first_name, last_name, image, uid, passport_no, email, visa_approved_at, initial_period, visa_periods, visa_expiry_date, visa_extend_for, visa_source, visa_type, absconding_type, agent_id, supplier_id, comment) {
+    // Helper to format date-like values into local YYYY-MM-DD string (or null)
+    static formatDateLocalVal(val) {
+        if (val === undefined || val === null || val === '') return null;
+        const d = new Date(val);
+        if (isNaN(d)) return null;
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+    }
+    static async createClient(first_name, last_name, image, uid, passport_no, email, visa_approved_at, initial_period, visa_periods,initial_visa_expiry_at , visa_expiry_date, visa_extend_for, visa_source, visa_type, absconding_type, agent_id, supplier_id, comment) {
         try {
             function sanitizeParams(params) {
                 return params.map(value => {
@@ -16,8 +26,8 @@ class clientModel {
             }
 
             const [result] = await connection.execute(
-                'INSERT INTO client (First_Name, Last_Name, Image, uid, Passport_No, Email, Visa_approved_at, initial_period, Visa_period, Visa_expiry_date, Visa_extend_for, Visa_source, Visa_type, Absconding_type, Agent_id, supplier_id, comment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                sanitizeParams([first_name, last_name, image, uid, passport_no, email, visa_approved_at, initial_period, visa_periods, visa_expiry_date, visa_extend_for, visa_source, visa_type, absconding_type, agent_id, supplier_id, comment])
+                'INSERT INTO client (First_Name, Last_Name, Image, uid, Passport_No, Email, Visa_approved_at, initial_period, Visa_period, initial_visa_expiry_at, Visa_expiry_date, Visa_extend_for, Visa_source, Visa_type, Absconding_type, Agent_id, supplier_id, comment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                sanitizeParams([first_name, last_name, image, uid, passport_no, email, visa_approved_at, initial_period, visa_periods, initial_visa_expiry_at, visa_expiry_date, visa_extend_for, visa_source, visa_type, absconding_type, agent_id, supplier_id, comment])
             );
             console.log("result ", result);
             
@@ -34,7 +44,12 @@ class clientModel {
                 'SELECT * FROM client WHERE uid = ?',
                 [nic]
             );
-            return rows;
+            return rows.map(row => ({
+                ...row,
+                Visa_expiry_date: this.formatDateLocalVal(row.Visa_expiry_date || row.visa_expiry_date),
+                Visa_approved_at: this.formatDateLocalVal(row.Visa_approved_at),
+                initial_visa_expiry_at: this.formatDateLocalVal(row.initial_visa_expiry_at || row.initial_visa_expiry || row.initialVisaExpiryAt),
+            }));
         } catch (error) {
             console.error('Error in findByNic:', error);
             throw error;
@@ -92,7 +107,15 @@ class clientModel {
             }
 
             const [results] = await connection.execute(query);
-            return results;
+            // Normalize date fields to YYYY-MM-DD strings to avoid timezone shifts in clients
+            const normalized = results.map(row => ({
+                ...row,
+                Visa_approved_at: this.formatDateLocalVal(row.Visa_approved_at),
+                migrated_at: this.formatDateLocalVal(row.migrated_at || row.Migrated_At),
+                Visa_expiry_date: this.formatDateLocalVal(row.Visa_expiry_date || row.visa_expiry_date),
+                initial_visa_expiry_at: this.formatDateLocalVal(row.initial_visa_expiry_at || row.initialVisaExpiryAt || row.initial_visa_expiry),
+            }));
+            return normalized;
         } catch (error) {
             console.error('Error in getAllClients:', error);
             throw error;
@@ -108,7 +131,13 @@ class clientModel {
                  WHERE c.agent_id = ?`,
                 [agentId]
             );
-            return results;
+            return results.map(row => ({
+                ...row,
+                Visa_approved_at: this.formatDateLocalVal(row.Visa_approved_at),
+                migrated_at: this.formatDateLocalVal(row.migrated_at || row.Migrated_At),
+                Visa_expiry_date: this.formatDateLocalVal(row.Visa_expiry_date || row.visa_expiry_date),
+                initial_visa_expiry_at: this.formatDateLocalVal(row.initial_visa_expiry_at || row.initial_visa_expiry || row.initialVisaExpiryAt),
+            }));
         } catch (error) {
             console.error('Error in getClientsByAgentId:', error);
             throw error;
@@ -128,7 +157,13 @@ class clientModel {
             results.forEach(record => {
                 console.log(`History record: ID=${record.Id}, Original_Client_Id=${record.Original_Client_Id}, Name=${record.First_Name} ${record.Last_Name}, Moved_At=${record.Moved_At}`);
             });
-            return results;
+            // Normalize date fields
+            const normalized = results.map(row => ({
+                ...row,
+                Visa_expiry_date: this.formatDateLocalVal(row.Visa_expiry_date || row.visa_expiry_date),
+                Moved_At: row.Moved_At ? row.Moved_At : null
+            }));
+            return normalized;
         } catch (error) {
             console.error('Error in getClientHistory:', error);
             throw error;
@@ -238,7 +273,6 @@ class clientModel {
                 if (!validStatuses.includes(status)) {
                     throw new Error(`Invalid status: ${status}. Must be one of: ${validStatuses.join(', ')}`);
                 }
-
                 const [result] = await connection.execute(
                     'UPDATE client_history SET Status = ? WHERE Id = ?',
                     [status, id]
@@ -249,6 +283,91 @@ class clientModel {
                 throw error;
             }
         }
+
+        static async deleteHistory(id) {
+            try {
+                const [result] = await connection.execute(
+                    'DELETE FROM client_history WHERE Id = ?',
+                    [id]
+                );
+                return { affectedRows: result.affectedRows };
+            } catch (error) {
+                console.error('Error in deleteHistory:', error);
+                throw error;
+            }
+        }
+
+            static async revertVisaExpiry(clientId) {
+                try {
+                    const client = await this.findById(clientId);
+                    if (!client) throw new Error('Client not found');
+                    console.log('revertVisaExpiry: fetched client:', client);
+
+                            // Determine new expiry: prefer stored initial_visa_expiry_at if available (check variants)
+                            // Helper: format local YYYY-MM-DD to avoid timezone shift when storing
+                            function formatDateLocal(d) {
+                                const dt = new Date(d);
+                                const yyyy = dt.getFullYear();
+                                const mm = String(dt.getMonth() + 1).padStart(2, '0');
+                                const dd = String(dt.getDate()).padStart(2, '0');
+                                return `${yyyy}-${mm}-${dd}`;
+                            }
+
+                            let newExpiry = null;
+                            const initialCandidates = [
+                                client.initial_visa_expiry_at,
+                                client.Initial_visa_expiry_at,
+                                client.initial_visa_expiry,
+                                client.Initial_visa_expiry,
+                                client.initialVisaExpiryAt
+                            ];
+                            const initialVal = initialCandidates.find(v => v !== undefined && v !== null && String(v).trim() !== '');
+                            if (initialVal) {
+                                const parsed = new Date(initialVal);
+                                if (!isNaN(parsed)) {
+                                    newExpiry = formatDateLocal(parsed);
+                                    console.log('revertVisaExpiry: using initial expiry from DB field, value=', initialVal, 'parsed(local)=', newExpiry);
+                                } else {
+                                    console.log('revertVisaExpiry: found initial expiry value but invalid date:', initialVal);
+                                }
+                            }
+
+                            if (!newExpiry && client.Visa_extend_for && client.Visa_extend_for > 0 && client.Visa_expiry_date) {
+                                // Safely subtract months (cap to month end)
+                                const current = new Date(client.Visa_expiry_date);
+                                const desiredDay = current.getDate();
+                                // Move to first of month, subtract months then clamp day
+                                const tmp = new Date(current);
+                                tmp.setDate(1);
+                                tmp.setMonth(tmp.getMonth() - Number(client.Visa_extend_for));
+                                const lastDay = new Date(tmp.getFullYear(), tmp.getMonth() + 1, 0).getDate();
+                                tmp.setDate(Math.min(desiredDay, lastDay));
+                                newExpiry = formatDateLocal(tmp);
+                                console.log('revertVisaExpiry: computed newExpiry by subtracting Visa_extend_for (local)=', newExpiry);
+                            }
+
+                            if (!newExpiry) {
+                                // Nothing to revert or no valid initial value
+                                console.log('revertVisaExpiry: nothing to revert for clientId', clientId, 'Visa_extend_for=', client.Visa_extend_for, 'Visa_expiry_date=', client.Visa_expiry_date);
+                                return { affectedRows: 0, message: 'No initial expiry stored and no extension to subtract' };
+                            }
+
+                    // Determine new visa period: prefer initial_period if present else subtract extend
+                    let newVisaPeriod = client.initial_period ?? (Number(client.Visa_period || 0) - Number(client.Visa_extend_for || 0));
+                    if (newVisaPeriod < 0) newVisaPeriod = 0;
+
+                    console.log('revertVisaExpiry: updating client', { clientId, newExpiry, newVisaPeriod });
+                    const [result] = await connection.execute(
+                        'UPDATE client SET Visa_expiry_date = ?, Visa_extend_for = 0, Visa_period = ? WHERE Id = ?',
+                        [newExpiry, newVisaPeriod, clientId]
+                    );
+                    console.log('revertVisaExpiry: update result', result);
+                    return { affectedRows: result.affectedRows };
+                } catch (error) {
+                    console.error('Error in revertVisaExpiry:', error);
+                    throw error;
+                }
+            }
 }
 
   

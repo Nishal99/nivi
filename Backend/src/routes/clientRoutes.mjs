@@ -63,10 +63,22 @@ clientRoutes.post('/archive-expired',
     clientController.archiveExpiredNow
 );
 
+// Revert visa expiry for a client (admin and users)
+clientRoutes.post('/change-visa-expiry-back',
+    checkRole([ROLES.ADMIN, ROLES.USER]),
+    clientController.revertVisaExpiryBack
+);
+
 // Update history client status (admin and users)
 clientRoutes.patch('/update-history-status/:id',
     checkRole([ROLES.ADMIN, ROLES.USER]),
     clientController.updateHistoryStatus
+);
+
+// Delete a history record (admin only)
+clientRoutes.delete('/delete-history/:id',
+    checkRole([ROLES.ADMIN]),
+    clientController.deleteHistory
 );
 
 export default clientRoutes;

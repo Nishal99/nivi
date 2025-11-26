@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupplierService } from '../../services/supplier.service';
+import Swal from 'sweetalert2';
 import { SupplierFormModalComponent } from './supplier-form-modal.component';
 
 @Component({
@@ -63,6 +64,7 @@ export class SupplierDetailsComponent implements OnInit {
           },
           error: (error) => {
             console.error('Error updating supplier:', error);
+            Swal.fire('Error', error?.error?.message || 'Failed to update supplier', 'error');
           }
         });
     } else {
@@ -74,22 +76,49 @@ export class SupplierDetailsComponent implements OnInit {
           },
           error: (error) => {
             console.error('Error creating supplier:', error);
+            const msg = error?.error?.message || (error?.statusText ? `${error.status} ${error.statusText}` : 'Failed to create supplier');
+            Swal.fire('Error creating supplier', msg, 'error');
           }
         });
     }
   }
 
   deleteSupplier(id: number) {
-    if (confirm('Are you sure you want to delete this supplier?')) {
-      this.supplierService.deleteSupplier(id).subscribe({
-        next: () => {
-          this.loadSuppliers();
-        },
-        error: (error) => {
-          console.error('Error deleting supplier:', error);
-        }
-      });
+    const supplier = this.suppliers.find(s => (s.id ?? s.id) === id);
+    const otherSuppliers = this.suppliers.filter(s => (s.id ?? s.id) !== id && (s.status ?? 'active') === 'active');
+    if (otherSuppliers.length === 0) {
+      alert('Please create or activate another supplier before deleting this one.');
+      return;
     }
+
+    const options = otherSuppliers.map(s => `<option value="${s.id}">${s.company_name}</option>`).join('');
+    Swal.fire({
+      title: 'Reassign clients before deleting supplier',
+      html: `
+        <p class="mb-2">Select the supplier to reassign existing clients to:</p>
+        <select id="reassignSupplierSelect" class="swal2-select form-select">${options}</select>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Reassign & Delete',
+      preConfirm: () => {
+        const select = (document.getElementById('reassignSupplierSelect') as HTMLSelectElement);
+        return select ? select.value : null;
+      }
+    }).then((result: any) => {
+            if (result.isConfirmed && result.value) {
+        const newSupplierId = Number(result.value);
+        this.supplierService.reassignAndDelete(id, newSupplierId).subscribe({
+          next: () => {
+            Swal.fire('Success', 'Clients reassigned and supplier deactivated', 'success');
+            this.loadSuppliers();
+          },
+          error: (err) => {
+            console.error('Error reassigning supplier:', err);
+            Swal.fire('Error', 'Failed to reassign and delete supplier', 'error');
+          }
+        });
+      }
+    });
   }
 
   searchSuppliers() {

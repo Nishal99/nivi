@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+
+import { Component, HostListener, OnInit } from '@angular/core';
 import { RouterLinkActive, RouterLink } from "@angular/router";
 import { NgIf } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
@@ -11,7 +12,18 @@ import { Router } from '@angular/router';
   templateUrl: './nav-bar.component.html',
   styleUrls: ['./nav-bar.component.scss'] // note: styleUrls (plural)
 })
-export class NavBarComponent {
+export class NavBarComponent implements OnInit {
+  // Property: true if mobile viewport
+  isMobile = window.innerWidth < 768;
+
+  @HostListener('window:resize')
+  onResize() {
+    this.isMobile = window.innerWidth < 768;
+  }
+
+  ngOnInit() {
+    this.isMobile = window.innerWidth < 768;
+  }
 
   currentUser: {
     id?: string;
@@ -31,6 +43,9 @@ export class NavBarComponent {
 
   toggleCollapse() {
     this.collapsed = !this.collapsed;
+    
+    
+    
   }
 
   toggleMobile() {
@@ -40,6 +55,7 @@ export class NavBarComponent {
   closeMobile() {
     this.mobileOpen = false;
   }
+
 
   loadCurrentUser() {
     const userId = localStorage.getItem('userId');

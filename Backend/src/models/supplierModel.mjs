@@ -107,13 +107,35 @@ class supplierModel {
 
     static async deleteSupplier(id) {
         try {
+            // Soft-delete: mark supplier as inactive to preserve clients and history
             const [result] = await connection.execute(
-                'DELETE FROM suppliers WHERE id = ?',
+                'UPDATE suppliers SET status = "inactive" WHERE id = ?',
                 [id]
             );
             return result.affectedRows > 0;
         } catch (error) {
             console.error('Error in deleteSupplier:', error);
+            throw error;
+        }
+    }
+
+    static async reassignClientsAndDelete(oldSupplierId, newSupplierId) {
+        try {
+            await connection.query('START TRANSACTION');
+            await connection.execute(
+                'UPDATE client SET supplier_id = ? WHERE supplier_id = ?',
+                [newSupplierId, oldSupplierId]
+            );
+            // Delete the old supplier row after clients have been reassigned
+            await connection.execute(
+                'DELETE FROM suppliers WHERE id = ?',
+                [oldSupplierId]
+            );
+            await connection.query('COMMIT');
+            return true;
+        } catch (error) {
+            await connection.query('ROLLBACK');
+            console.error('Error in reassignClientsAndDelete (supplier):', error);
             throw error;
         }
     }

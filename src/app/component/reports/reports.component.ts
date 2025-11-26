@@ -43,6 +43,11 @@ export class ReportsComponent implements OnInit {
     });
   }
 
+  private pickExpiry(obj: any): any {
+    if (!obj) return null;
+    return obj.Visa_expiry_date ?? obj.visa_expiry_date ?? obj.expiry_date ?? obj.Visa_Expiry_date ?? obj.Visa_Expiry_Date ?? obj.VisaExpiryDate ?? obj.expiryDate ?? null;
+  }
+
   ngOnInit(): void {}
 
   get reportType(): string {
@@ -108,6 +113,8 @@ export class ReportsComponent implements OnInit {
       
       // Add client info if it exists
       if (item.client_first_name || item.client_last_name) {
+        // Normalize possible expiry fields for clients
+        const clientExpiry = item.client_Visa_expiry_date ?? item.client_visa_expiry_date ?? item.client_expiry_date ?? item.Visa_expiry_date ?? item.visa_expiry_date ?? item.expiry_date ?? null;
         agentMap.get(agentId).clients.push({
           first_name: item.client_first_name,
           last_name: item.client_last_name,
@@ -118,7 +125,8 @@ export class ReportsComponent implements OnInit {
           email: item.client_email,
           visa_type: item.client_visa_type,
           visa_source: item.client_visa_source,
-          created_at: item.client_created_at
+          created_at: item.client_created_at,
+          expiry_date: clientExpiry
         });
       }
     });
@@ -176,9 +184,18 @@ export class ReportsComponent implements OnInit {
       
       // Process data based on report type
       const rawData = response.data || [];
-      this.results = this.reportType === 'agent' 
+      this.results = this.reportType === 'agent'
         ? this.groupAgentResults(rawData)
-        : rawData;
+        : rawData.map((it: any) => ({ ...it, expiry_date: this.pickExpiry(it) }));
+
+      // Ensure agent clients also have expiry_date normalized
+      if (this.reportType === 'agent') {
+        this.results.forEach((agent: any) => {
+          if (Array.isArray(agent.clients)) {
+            agent.clients = agent.clients.map((c: any) => ({ ...c, expiry_date: this.pickExpiry(c) }));
+          }
+        });
+      }
 
       if (this.results.length > 0) {
         const recordCount = this.reportType === 'agent'

@@ -40,6 +40,10 @@ export class SupplierService {
     return this.http.delete(`${this.apiUrl}/${id}`, this.getHeaders());
   }
 
+  reassignAndDelete(oldSupplierId: number, newSupplierId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/reassign-delete`, { oldSupplierId, newSupplierId }, this.getHeaders());
+  }
+
   searchSuppliers(query: string): Observable<any> {
     const params = new HttpParams().set('query', query);
     return this.http.get(`${this.apiUrl}/search`, { ...this.getHeaders(), params });

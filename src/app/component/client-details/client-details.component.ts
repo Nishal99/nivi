@@ -36,14 +36,14 @@ interface client {
 @Component({
   selector: 'app-client-details',
   imports: [
-    NgStyle, 
-    ReactiveFormsModule, 
-    FormsModule, 
-    NgFor, 
-    NgIf, 
-    DatePipe, 
-    CommonModule, 
-    SupplierSearchModalComponent, 
+    NgStyle,
+    ReactiveFormsModule,
+    FormsModule,
+    NgFor,
+    NgIf,
+    DatePipe,
+    CommonModule,
+    SupplierSearchModalComponent,
     AgentSearchModalComponent
   ],
   templateUrl: './client-details.component.html',
@@ -80,7 +80,7 @@ export class ClientDetailsComponent implements OnInit {
   get isAdmin(): boolean {
     const role = (localStorage.getItem('role') || '').toLowerCase();
     const isAdmin = role === 'admin';
-    console.log('Role check:', { role, isAdmin });
+    //console.log('Role check:', { role, isAdmin });
     return isAdmin;
   }
   isEditMode: boolean = false;
@@ -142,7 +142,7 @@ export class ClientDetailsComponent implements OnInit {
 
 
     // Add these validators to client-details component
-  VALID_MIME_TYPES = ['image/jpeg', 'image/png'];
+   VALID_MIME_TYPES = ['image/jpeg', 'image/png'];
    MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
   
   onFileSelect(event: any) {
@@ -799,6 +799,29 @@ export class ClientDetailsComponent implements OnInit {
     });
   }
 
+  deleteHistory(historyId: number) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'This will permanently delete the archived history record.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.clientService.deleteClientHistory(historyId).subscribe({
+          next: (res: any) => {
+            Swal.fire('Deleted!', res.message || 'History record deleted.', 'success');
+            this.getClientHistory();
+          },
+          error: (err) => {
+            console.error('Error deleting history record', err);
+            Swal.fire('Error', err.error?.message || 'Failed to delete history record', 'error');
+          }
+        });
+      }
+    });
+  }
+
   onHistoryStatusFilterChange(event: any) {
     this.selectedHistoryStatus = event.target.value;
     this.applyHistoryStatusFilter();
@@ -818,5 +841,49 @@ export class ClientDetailsComponent implements OnInit {
   clearHistoryFilters() {
     this.selectedHistoryStatus = 'all';
     this.applyHistoryStatusFilter();
+  }
+
+  
+  changeVisaExpiryBack(clientId?: number | null) {
+    const id = clientId ?? this.selectedClientId ?? this.saveClient.get('id')?.value;
+    console.log('changeVisaExpiryBack called for id:', id);
+
+    if (!id) {
+      Swal.fire({ icon: 'error', title: 'Missing ID', text: 'Client ID is required.' });
+      return;
+    }
+
+    Swal.fire({
+      title: 'Confirm revert',
+      text: 'Are you sure you want to revert the visa expiry for this client?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, revert it',
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      Swal.fire({ title: 'Reverting...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+
+      const token = localStorage.getItem('token');
+      const headers = token ? ({ Authorization: `Bearer ${token}` } as Record<string, string>) : ({} as Record<string, string>);
+
+      // Send clientId to backend endpoint. Endpoint: /api/clients/change-visa-expiry-back
+      this.http.post(`${this.apiUrl}/change-visa-expiry-back`, { clientId: id }, { headers }).subscribe({
+        next: (response: any) => {
+          Swal.close();
+          Swal.fire({ icon: 'success', title: 'Success', text: response?.message || 'Visa expiry reverted successfully.' });
+          // Refresh lists
+          this.getAllClients();
+          this.getClientHistory();
+          
+        },
+        error: (err) => {
+          Swal.close();
+          console.error('Error reverting visa expiry', err);
+          Swal.fire({ icon: 'error', title: 'Error', text: err?.error?.message || err?.message || 'Failed to revert visa expiry.' });
+        }
+      });
+      // Do NOT reload the page. We refresh the table(s) above.
+    });
   }
 }

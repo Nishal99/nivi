@@ -56,7 +56,7 @@ class ReportModel {
         // Agent report: return agent details and their clients (flattened rows; client columns may be null)
         // Select only columns that exist in the client schema to avoid SQL errors
         query = `SELECT a.Id as agent_id, a.CompanyName as companyName, a.Email as email, a.Contact as contact, a.Created_At as agent_created_at,
-                        c.Id as client_id, c.First_Name as client_first_name, c.Last_Name as client_last_name, c.Image as client_image, c.Passport_No as client_passport_no, c.Email as client_email, c.Visa_type as client_visa_type, c.visa_source as client_visa_source, c.Visa_approved_at as client_visa_approved_at, c.Created_At as client_created_at
+            c.Id as client_id, c.First_Name as client_first_name, c.Last_Name as client_last_name, c.Image as client_image, c.Passport_No as client_passport_no, c.Email as client_email, c.Visa_type as client_visa_type, c.visa_source as client_visa_source, c.Visa_approved_at as client_visa_approved_at, c.Visa_expiry_date as client_visa_expiry_date, c.Created_At as client_created_at
                  FROM agent a LEFT JOIN client c ON c.Agent_id = a.Id
                  WHERE a.Created_At BETWEEN ? AND ?`;
         params = [startDate, endDate];

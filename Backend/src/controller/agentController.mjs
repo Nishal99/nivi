@@ -114,4 +114,18 @@ const deleteAgent = async (req, res) => {
     }
 };
 
-export default { addAgent, getAllAgents, getAgentById, updateAgent, searchAgents, deleteAgent };
+const reassignAndDeleteAgent = async (req, res) => {
+    try {
+        const { oldAgentId, newAgentId } = req.body;
+        if (!oldAgentId || !newAgentId) {
+            return res.status(400).json({ error: 'oldAgentId and newAgentId are required' });
+        }
+        await agentModel.reassignClientsAndDelete(oldAgentId, newAgentId);
+        res.status(200).json({ message: 'Clients reassigned and agent deleted' });
+    } catch (error) {
+        console.error('Error in reassignAndDeleteAgent:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+export default { addAgent, getAllAgents, getAgentById, updateAgent, searchAgents, deleteAgent, reassignAndDeleteAgent };

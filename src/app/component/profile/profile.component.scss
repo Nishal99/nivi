@@ -266,3 +266,29 @@ label {
 .inline-block {
   display: inline-block;
 }
+
+.delete-btn {
+  padding: 0.38rem 0.7rem;
+  border: 1px solid #dc3545;
+  background: #fff;
+  color: #dc3545;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.15s ease-in-out;
+
+  &:hover {
+    background: #dc3545;
+    color: #fff;
+    border-color: #c82333;
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+/* small spacing utility used in templates */
+.ml-2 {
+  margin-left: 0.5rem;
+}

@@ -108,37 +108,40 @@ class agentModel {
             //     `select * from agent where Id = ?`, [id]
             // );
 
-
-           
             const [result] = await connection.execute(
                 'UPDATE agent SET status = "inactive" WHERE Id = ?',
                 [id]
             );
 
-           
-
-            // const [addDeleteAgent] = await connection.execute(
-            //     `INSERT INTO delete_agent (Id, companyName, email, contact, ConPersonName, ConPersonEmail, ContPersonPhone) VALUES (?,?,?,?,?,?,?)`,
-            //    [
-            //     agent.Id ?? agent.id ?? agent.id  ,
-            //     agent.companyName ?? null,
-            //     agent.email ?? null,
-            //     agent.contact ?? null,
-            //     agent.ContactPersonName ?? null,
-            //     agent.ContactPersonEmail ?? null,
-            //     agent.ContactPersonPhone ?? null
-            //     ]
-            // );
-            // console.log(addDeleteAgent);
-           
             return result.affectedRows;
         } catch (error) {
             console.error('Error in deleteAgent:', error);
             throw error;
         }
-}
+    }
 
-
+    static async reassignClientsAndDelete(oldAgentId, newAgentId) {
+        try {
+            // Use a transaction to ensure both operations succeed together
+            await connection.query('START TRANSACTION');
+            // Reassign clients
+            await connection.execute(
+                'UPDATE client SET Agent_id = ? WHERE Agent_id = ?',
+                [newAgentId, oldAgentId]
+            );
+            // Delete the old agent row after clients have been reassigned
+            await connection.execute(
+                'DELETE FROM agent WHERE Id = ?',
+                [oldAgentId]
+            );
+            await connection.query('COMMIT');
+            return true;
+        } catch (error) {
+            await connection.query('ROLLBACK');
+            console.error('Error in reassignClientsAndDelete:', error);
+            throw error;
+        }
+    }
 }
 
 export default agentModel;

@@ -1,7 +1,6 @@
 import clientModel from '../models/clientModel.mjs'
 import upload from '../middleware/upload.mjs';
 import { moveExpiredClients } from '../scheduler/archiveExpiredClients.mjs';
-import connection from '../database/database.mjs';
 
 // Helper to parse extend months which may come as labels like "1 MONTH EXTENSION 1"
 function parseExtendMonths(raw) {
@@ -16,6 +15,47 @@ function parseExtendMonths(raw) {
     return 0;
 }
 
+// Add months while capping to the end of target month (avoid JS setMonth overflow)
+function addMonthsSafe(date, months) {
+    const d = new Date(date);
+    const day = d.getDate();
+    // Move to first of month to avoid overflow then advance months
+    d.setDate(1);
+    d.setMonth(d.getMonth() + months);
+    // Determine last day of target month
+    const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+    d.setDate(Math.min(day, lastDay));
+    return d;
+}
+
+// Format a Date object into YYYY-MM-DD using local date components (avoid toISOString timezone shifts)
+function formatDateLocal(date) {
+    const d = new Date(date);
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+}
+
+// Revert visa expiry for a client (set back to initial expiry or subtract extension months)
+const revertVisaExpiryBack = async function(req, res) {
+    try {
+        const { clientId } = req.body || {};
+        if (!clientId) return res.status(400).json({ message: 'clientId is required' });
+
+        console.log('revertVisaExpiryBack: received request for clientId', clientId, 'by user', req.user?.id, 'role', req.user?.role);
+        const result = await clientModel.revertVisaExpiry(clientId);
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: result.message || 'Nothing to revert or client not found' });
+        }
+
+        res.status(200).json({ message: 'Visa expiry reverted successfully', affectedRows: result.affectedRows });
+    } catch (err) {
+        console.error('Error reverting visa expiry:', err);
+        res.status(500).json({ message: 'Failed to revert visa expiry: ' + err.message });
+    }
+};
+
 
 
 const addClient = async (req, res) => {
@@ -23,7 +63,9 @@ const addClient = async (req, res) => {
     
     try {
     const { image = null, first_name = null, last_name = null, uid = null, passport_no = null, email = null, visa_approved_at = null, visa_expiry_date = null, visa_type = null, visa_extend_for = null, visa_source = null, absconding_type = null, agent_id = null, supplier_id = null, comment = null } = req.body || {};
-         
+    const initial_visa_expiry_at = visa_expiry_date;
+    console.log(initial_visa_expiry_at);
+    
     // Validate required fields
     if (!visa_expiry_date || isNaN(Date.parse(visa_expiry_date))) {
         return res.status(400).json({ message: 'Invalid or missing Visa_expiry_date' });
@@ -36,10 +78,9 @@ const addClient = async (req, res) => {
     let final_visa_expiry_date;
     if (extendMonths > 0) {
         const baseExpiry = new Date(visa_expiry_date);
-        // Add calendar months instead of fixed 30-day periods
-        const finalExpiry = new Date(baseExpiry);
-        finalExpiry.setMonth(finalExpiry.getMonth() + extendMonths);
-        final_visa_expiry_date = finalExpiry.toISOString().split('T')[0];
+        // Add calendar months safely (cap to month end)
+        const finalExpiry = addMonthsSafe(baseExpiry, extendMonths);
+        final_visa_expiry_date = formatDateLocal(finalExpiry);
         
         console.log('Creating client with extensions:', {
             originalExpiry: visa_expiry_date,
@@ -69,22 +110,6 @@ const addClient = async (req, res) => {
     });
     console.log('Creating client with supplier_id:', supplier_id);
 
-    // Process agent_id - validate it exists if provided
-    let validated_agent_id = null;
-    if (agent_id) {
-        const parsed_agent_id = Array.isArray(agent_id) ? parseInt(agent_id[0]) : (agent_id ? parseInt(agent_id) : null);
-        if (parsed_agent_id) {
-            // Verify the agent exists in the database
-            const [agent_check] = await connection.execute('SELECT Id FROM agent WHERE Id = ?', [parsed_agent_id]);
-            if (agent_check.length > 0) {
-                validated_agent_id = parsed_agent_id;
-            } else {
-                console.warn(`Agent with ID ${parsed_agent_id} not found, creating client without agent reference`);
-                validated_agent_id = null;
-            }
-        }
-    }
-
     // prefer multer file name when available
     const imageName = req.file?.filename ?? image;
     const addClient = await clientModel.createClient(
@@ -97,12 +122,13 @@ const addClient = async (req, res) => {
         visa_approved_at,
         calculatedBase, // initial_period
         visa_periods,
+        initial_visa_expiry_at ,
         final_visa_expiry_date,
         extendMonths,
         visa_source,
         visa_type,
         absconding_type,
-        validated_agent_id,
+        Array.isArray(agent_id) ? parseInt(agent_id[0]) : (agent_id ? parseInt(agent_id) : null),
         Array.isArray(supplier_id) ? parseInt(supplier_id[0]) : (supplier_id ? parseInt(supplier_id) : null),
         comment
     );
@@ -237,10 +263,9 @@ const getClients = async function(req, res) {
             }
             
             const currentExpiry = new Date(currentExpiryDate);
-            // Add calendar months instead of fixed 30-day periods
-            const newExpiryDate = new Date(currentExpiry);
-            newExpiryDate.setMonth(newExpiryDate.getMonth() + extendFor);
-            final_visa_expiry_date = newExpiryDate.toISOString().split('T')[0];
+            // Add calendar months safely (cap to month end)
+            const newExpiryDate = addMonthsSafe(currentExpiry, extendFor);
+            final_visa_expiry_date = formatDateLocal(newExpiryDate);
             
             console.log('Extending visa:', {
                 currentExpiry: currentExpiryDate,
@@ -325,6 +350,20 @@ async function deleteClient(req, res) {
     }   
 };
 
+async function deleteHistory(req, res) {
+    try {
+        const id = parseInt(req.params.id);
+        const result = await clientModel.deleteHistory(id);
+        res.status(200).json({
+            message: result.affectedRows > 0 ? 'History record deleted successfully' : 'History record not found',
+            affectedRows: result.affectedRows
+        });
+    } catch (err) {
+        console.error('Error deleting history record:', err);
+        res.status(500).json({ error: 'Failed to delete history record' });
+    }
+};
+
 // Export functions (placed after declarations to avoid temporal dead zone)
 
 // Return archived clients (history)
@@ -386,6 +425,9 @@ const updateHistoryStatus = async function(req, res) {
     }
 };
 
+
+
+
 export default {
     addClient,
     findByNic,
@@ -394,5 +436,7 @@ export default {
     getClientHistory,
     archiveExpiredNow,
     deleteClient,
-    updateHistoryStatus
+    deleteHistory,
+    updateHistoryStatus,
+    revertVisaExpiryBack,
 };

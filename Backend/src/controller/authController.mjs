@@ -225,6 +225,31 @@ const authController = {
         }
     },
 
+        deleteUser: async (req, res) => {
+            try {
+                const { userId } = req.params;
+
+                if (!userId) {
+                    return res.status(400).json({ message: 'User ID is required' });
+                }
+
+                // Prevent admin from deleting themselves
+                if (req.user && req.user.id && String(req.user.id) === String(userId)) {
+                    return res.status(400).json({ message: 'You cannot delete your own account' });
+                }
+
+                const success = await userModel.deleteUser(userId);
+                if (!success) {
+                    return res.status(404).json({ message: 'User not found' });
+                }
+
+                res.json({ message: 'User deleted successfully' });
+            } catch (error) {
+                console.error('Delete user error:', error);
+                res.status(500).json({ message: 'Server error' });
+            }
+        },
+
     getUserProfile: async (req, res) => {
         try {
             const { userId } = req.params;
