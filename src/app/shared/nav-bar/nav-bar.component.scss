@@ -1,0 +1,63 @@
+.sidebar {
+  background: linear-gradient(to bottom, #ffffff, #f8fafc);
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s, width 0.3s;
+  /* positioning is controlled via utility classes in the template (absolute/fixed/static) */
+}
+
+.nav-link {
+  position: relative;
+  transition: all 0.3s ease;
+
+  &:hover {
+    .nav-icon {
+      transform: translateX(4px);
+    }
+  }
+
+  &.active {
+    .nav-icon {
+      color: #3b82f6;
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 60%;
+      width: 3px;
+      background: #3b82f6;
+      border-radius: 0 4px 4px 0;
+    }
+  }
+}
+
+.nav-icon {
+  transition: transform 0.2s ease;
+}
+
+.brand-logo {
+  filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.1));
+}
+
+.profile-section {
+  border-top: 1px solid #f1f5f9;
+  
+  img {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+}
+.logout-btn {
+  width:100%;
+  color: rgb(0, 0, 0);
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: #c82333;
+  }
+}

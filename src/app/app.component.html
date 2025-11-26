@@ -1,0 +1,12 @@
+<!-- Layout: sidebar + main content. Sidebar becomes part of flow on md+ so content sits beside it -->
+<div class="min-h-screen flex relative">
+	<!-- Sidebar (do not shrink) -->
+	<app-nav-bar *ngIf="showNavBar" class="flex-shrink-0"></app-nav-bar>
+
+	<!-- Main content; grows to fill remaining space. min-w-0 prevents child overflow inside flex -->
+	<main class="flex-1 bg-gray-50 min-w-0 overflow-x-hidden overflow-y-auto h-screen ">
+		<div class="">
+			<router-outlet></router-outlet>
+		</div>
+	</main>
+</div>

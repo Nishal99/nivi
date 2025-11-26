@@ -1,0 +1,109 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+    <div class="container mx-auto px-2 sm:px-4 py-6 sm:py-8 lg:px-8 lg:py-12">
+        <!-- Hero Title Section -->
+        <div class="text-center mb-8 sm:mb-12">
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 text-gray-800">
+                Dashboard Overview
+            </h1>
+            <p class="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto">
+                Monitor your clients, agents, and visa statuses at a glance.
+            </p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
+            <!-- Total Clients Card -->
+            <div class="bg-white rounded-xl shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 overflow-hidden border border-blue-100">
+                <div class="p-4 sm:p-6 bg-gradient-to-r from-blue-50 to-indigo-50">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="p-2 bg-blue-100 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                            </svg>
+                        </div>
+                        <span class="text-xs font-medium text-blue-600 uppercase tracking-wide">Clients</span>
+                    </div>
+                    <div class="text-2xl sm:text-3xl lg:text-4xl font-bold text-blue-600">{{totalClients}}</div>
+                </div>
+            </div>
+
+            <!-- Total Agents Card -->
+            <div class="bg-white rounded-xl shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 overflow-hidden border border-green-100">
+                <div class="p-4 sm:p-6 bg-gradient-to-r from-green-50 to-emerald-50">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="p-2 bg-green-100 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                        </div>
+                        <span class="text-xs font-medium text-green-600 uppercase tracking-wide">Agents</span>
+                    </div>
+                    <div class="text-2xl sm:text-3xl lg:text-4xl font-bold text-green-600">{{totalAgents}}</div>
+                </div>
+            </div>
+
+            <!-- Expiring Visas Card -->
+            <div class="bg-white rounded-xl shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 overflow-hidden border border-orange-100">
+                <div class="p-4 sm:p-6 bg-gradient-to-r from-orange-50 to-red-50">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="p-2 bg-orange-100 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <span class="text-xs font-medium text-orange-600 uppercase tracking-wide">Expiring Soon</span>
+                    </div>
+                    <div class="text-2xl sm:text-3xl lg:text-4xl font-bold text-red-600">{{expiringVisas}}</div>
+                    <div class="text-xs text-gray-500 mt-1">In the next 30 days</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="p-4 sm:p-6 lg:p-8">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6">
+                    <h2 class="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-800 mb-2 sm:mb-0">Visa Expiry Timeline</h2>
+                    <span class="text-xs sm:text-sm text-gray-500 hidden sm:inline">Interactive chart showing upcoming expirations</span>
+                </div>
+                <div class="relative w-full h-64 sm:h-80 lg:h-96 bg-gray-50 rounded-lg">
+                    <!-- Loading State -->
+                    <div *ngIf="isLoading" class="absolute inset-0 flex items-center justify-center">
+                        <div class="text-center text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 mb-4 text-gray-400 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            <p class="text-sm">Loading dashboard...</p>
+                        </div>
+                    </div>
+
+                    <!-- Error State -->
+                    <div *ngIf="error && !isLoading" class="absolute inset-0 flex items-center justify-center bg-white rounded-lg">
+                        <div class="text-center text-gray-500 p-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 mb-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                            <p class="text-sm mb-2">{{ error }}</p>
+                            <button (click)="onRetry()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm transition-colors">
+                                Retry
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Empty Data State -->
+                    <div *ngIf="!isLoading && !error && expiringVisasData.length === 0" class="absolute inset-0 flex items-center justify-center text-gray-500">
+                        <div class="text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 mb-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                            <p class="text-sm">No visa expiry data available</p>
+                        </div>
+                    </div>
+
+                    <!-- Chart Canvas (shown when ready) -->
+                    <canvas *ngIf="!isLoading && !error && expiringVisasData.length > 0" id="visaExpiryChart" class="absolute inset-0 w-full h-full"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

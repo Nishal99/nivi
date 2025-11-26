@@ -1,0 +1,40 @@
+{
+  "name": "visa_management_backend",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "Yasiru Fonseka",
+  "type": "module",
+  "main": "server.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.mjs",
+    "dev": "nodemon server.mjs",
+    "migrate": "node src/scripts/apply_migrations.mjs"
+  },
+  "dependencies": {
+    "@angular/compiler": "^19.2.15",
+    "@angular/platform-browser-dynamic": "^19.2.15",
+    "bcryptjs": "^3.0.2",
+    "compression": "^1.8.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "dotenv-safe": "^9.1.0",
+    "exceljs": "^4.4.0",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.2.1",
+    "express-sanitizer": "^1.0.6",
+    "express-validator": "^7.3.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.1",
+    "multer": "^2.0.2",
+    "mysql2": "^3.15.3",
+    "node-cron": "^4.2.1",
+    "nodemailer": "^7.0.10",
+    "winston": "^3.18.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
